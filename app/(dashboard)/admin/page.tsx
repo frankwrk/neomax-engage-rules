@@ -7,9 +7,8 @@ import type { AdminDashboardStats } from "@/types"
 import { ROUTES } from "@/lib/constants"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { MainNav } from "@/components/main-nav"
-import { Footer } from "@/components/footer"
-import { Users, Trophy, Calendar, Award } from "lucide-react"
+import { Users, Trophy, Calendar, Award, Settings, FileText } from "lucide-react"
+import { AdminPageWrapper } from "./admin-wrapper"
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState<AdminDashboardStats>({
@@ -62,7 +61,6 @@ export default function AdminDashboardPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen flex-col">
-        <MainNav />
         <main className="flex-1 py-12">
           <div className="container">
             <div className="flex items-center justify-center h-64">
@@ -70,16 +68,13 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         </main>
-        <Footer />
       </div>
     )
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <MainNav />
-      <main className="flex-1 py-12">
-        <div className="container">
+    <AdminPageWrapper>
+      <div>
           <div className="mb-8">
             <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
             <p className="text-muted-foreground mt-1">Manage competitions, users, and monitor platform activity.</p>
@@ -134,18 +129,39 @@ export default function AdminDashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-                <CardDescription>Common administrative tasks</CardDescription>
+                <CardTitle>Admin Actions</CardTitle>
+                <CardDescription>Manage platform resources</CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
                 <Button className="w-full justify-start" asChild>
-                  <Link href={ROUTES.ADMIN.COMPETITIONS}>Manage Competitions</Link>
+                  <Link href="/admin/users">
+                    <Users className="h-4 w-4 mr-2" />
+                    Manage Users
+                  </Link>
                 </Button>
                 <Button className="w-full justify-start" asChild>
-                  <Link href={ROUTES.ADMIN.USERS}>Manage Users</Link>
+                  <Link href="/admin/competitions">
+                    <Trophy className="h-4 w-4 mr-2" />
+                    Manage Competitions
+                  </Link>
                 </Button>
                 <Button className="w-full justify-start" asChild>
-                  <Link href={ROUTES.ADMIN.WINNERS}>Process Winners</Link>
+                  <Link href="/admin/winners">
+                    <Award className="h-4 w-4 mr-2" />
+                    Process Winners
+                  </Link>
+                </Button>
+                <Button className="w-full justify-start" asChild>
+                  <Link href="/admin/consent-records">
+                    <FileText className="h-4 w-4 mr-2" />
+                    Consent Records
+                  </Link>
+                </Button>
+                <Button className="w-full justify-start" asChild>
+                  <Link href="/admin/settings">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Platform Settings
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
@@ -186,10 +202,7 @@ export default function AdminDashboardPage() {
               </CardFooter>
             </Card>
           </div>
-        </div>
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </AdminPageWrapper>
   )
 }
-

@@ -15,7 +15,7 @@ import { Trophy, Calendar, CheckCircle } from "lucide-react"
 export default function DashboardPage() {
   const { user } = useAuth()
   const [activeCompetitions, setActiveCompetitions] = useState<Competition[]>([])
-  const [userEntries, setUserEntries] = useState<Entry[]>([])
+  const [userEntries, setUserEntries] = useState<(Entry & { competitionTitle?: string })[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -24,27 +24,118 @@ export default function DashboardPage() {
 
       try {
         // Fetch active competitions
-        const { data: competitionsData } = await supabase
-          .from("competitions")
+        const { data: competitionsData } = await supabase?.from("competitions")
           .select("*")
           .filter("ends_at", "gt", new Date().toISOString())
           .order("created_at", { ascending: false })
-          .limit(3)
+          .limit(3) || { data: null }
 
         if (competitionsData) {
-          setActiveCompetitions(competitionsData as Competition[])
+          // Convert snake_case database fields to camelCase for the Competition type
+          const formattedCompetitions: Competition[] = competitionsData.map(comp => ({
+            id: comp.id as string,
+            title: comp.title as string,
+            description: comp.description as string,
+            adUrl: comp.ad_url as string,
+            question: comp.question as string,
+            correctAnswer: comp.correct_answer as string,
+            createdAt: comp.created_at as string,
+            endsAt: comp.ends_at as string
+          }))
+          setActiveCompetitions(formattedCompetitions)
         }
 
         // Fetch user entries
         if (user) {
-          const { data: entriesData } = await supabase
-            .from("entries")
-            .select("*, competitions(*)")
+          // Fetch entries first
+          const { data: entriesData } = await supabase?.from("entries")
+            .select("*")
             .eq("user_id", user.id)
-            .order("created_at", { ascending: false })
+            .order("created_at", { ascending: false }) || { data: null }
+            
+          // Define interface for the enhanced entry with competition data
+          interface EntryWithCompetition {
+            id: string;
+            user_id: string;
+            competition_id: string;
+            entry_number: string;
+            answer: string;
+            correct: boolean;
+            created_at: string;
+            competitionData?: {
+              id: string;
+              title: string;
+              description: string;
+              ad_url: string;
+              question: string;
+              correct_answer: string;
+              created_at: string;
+              ends_at: string;
+            } | null;
+            [key: string]: unknown; // For any other fields in the database response
+          }
 
-          if (entriesData) {
-            setUserEntries(entriesData as Entry[])
+          // Get competition data separately for better type safety
+          let entriesWithCompetitions: EntryWithCompetition[] = [];
+          // Type guard to ensure entriesData has the expected structure
+          type DatabaseEntry = {
+            id: string;
+            user_id: string;
+            competition_id: string;
+            entry_number: string;
+            answer: string;
+            correct: boolean;
+            created_at: string;
+            [key: string]: unknown;
+          };
+
+          // Function to check if an entry has the required properties
+          function isDatabaseEntry(entry: unknown): entry is DatabaseEntry {
+            return (
+              typeof entry === 'object' &&
+              entry !== null &&
+              'id' in entry &&
+              'user_id' in entry &&
+              'competition_id' in entry &&
+              'entry_number' in entry &&
+              'answer' in entry &&
+              'correct' in entry &&
+              'created_at' in entry
+            );
+          }
+
+          if (entriesData && Array.isArray(entriesData) && entriesData.length > 0) {
+            // Create a properly typed array of validated entries
+            const validatedEntries = entriesData.filter(isDatabaseEntry);
+
+            entriesWithCompetitions = await Promise.all(
+              validatedEntries.map(async (entry) => {
+                const { data: competitionData } = await supabase?.from("competitions")
+                  .select("*")
+                  .eq("id", entry.competition_id)
+                  .single() || { data: null };
+                return {
+                  ...entry,
+                  competitionData
+                } as EntryWithCompetition;
+              })
+            );
+          }
+
+          if (entriesWithCompetitions && entriesWithCompetitions.length > 0) {
+            // Convert snake_case database fields to camelCase for the Entry type
+            // Map entries and add title from joined competitions data
+            const formattedEntries: (Entry & { competitionTitle?: string })[] = entriesWithCompetitions.map(entry => ({
+              id: entry.id as string,
+              userId: entry.user_id as string,
+              competitionId: entry.competition_id as string,
+              entryNumber: entry.entry_number as string,
+              answer: entry.answer as string,
+              correct: entry.correct as boolean,
+              createdAt: entry.created_at as string,
+              competitionTitle: entry.competitionData?.title as string
+            }))
+            setUserEntries(formattedEntries)
           }
         }
       } catch (error) {
@@ -171,7 +262,7 @@ export default function DashboardPage() {
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                       <div>
                         <h3 className="text-lg font-semibold">
-                          {(entry as any).competitions?.title || "Competition Entry"}
+                          {entry.competitionTitle || "Competition Entry"}
                         </h3>
                         <p className="text-sm text-gray-300">Entry Number: {entry.entryNumber}</p>
                         <p className="text-sm text-gray-300">Date: {formatDate(entry.createdAt)}</p>

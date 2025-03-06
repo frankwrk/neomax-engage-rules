@@ -5,14 +5,14 @@ import type React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabase, isSupabaseConfigured } from "@/lib/supabase"
-import type { User } from "@/types"
+import type { User, UserRegistrationFormValues } from "@/types"
 import { ROUTES } from "@/lib/constants"
 
 interface AuthContextType {
   user: User | null
   isLoading: boolean
   signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
-  signUp: (userData: any) => Promise<{ success: boolean; error?: string }>
+  signUp: (userData: UserRegistrationFormValues) => Promise<{ success: boolean; error?: string }>
   signOut: () => Promise<void>
 }
 
@@ -33,13 +33,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const fetchUser = async () => {
       const {
         data: { session },
-      } = await supabase!.auth.getSession()
+      } = await supabase?.auth.getSession() || { data: { session: null } }
 
       if (session) {
-        const { data: userData } = await supabase!.from("users").select("*").eq("id", session.user.id).single()
+        const { data: userData } = await supabase?.from("users").select("*").eq("id", session.user.id).single() || { data: null }
 
         if (userData) {
-          setUser(userData as User)
+          setUser({
+            id: userData.id as string,
+            email: userData.email as string,
+            fullName: userData.full_name as string,
+            mobileNumber: userData.mobile_number as string,
+            gender: userData.gender as "male" | "female" | "other",
+            ageRange: userData.age_range as string,
+            county: userData.county as string,
+            interests: userData.interests as string[],
+            createdAt: userData.created_at as string
+          })
         }
       }
 
@@ -48,14 +58,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     fetchUser()
 
-    const {
-      data: { subscription },
-    } = supabase!.auth.onAuthStateChange(async (event, session) => {
+    // Get the auth subscription for handling auth state changes
+    // Define a fallback response for handling the case when supabase client isn't available
+    const authChangeResponse = supabase?.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" && session) {
-        const { data: userData } = await supabase!.from("users").select("*").eq("id", session.user.id).single()
+        const { data: userData } = await supabase?.from("users").select("*").eq("id", session.user.id).single() || { data: null }
 
         if (userData) {
-          setUser(userData as User)
+          setUser({
+            id: userData.id as string,
+            email: userData.email as string,
+            fullName: userData.full_name as string,
+            mobileNumber: userData.mobile_number as string,
+            gender: userData.gender as "male" | "female" | "other",
+            ageRange: userData.age_range as string,
+            county: userData.county as string,
+            interests: userData.interests as string[],
+            createdAt: userData.created_at as string
+          })
         }
       } else if (event === "SIGNED_OUT") {
         setUser(null)
@@ -63,7 +83,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
 
     return () => {
-      subscription.unsubscribe()
+      // Clean up subscription when component unmounts
+      if (authChangeResponse && 'data' in authChangeResponse) {
+        const { data } = authChangeResponse;
+        if (data && 'subscription' in data) {
+          data.subscription.unsubscribe();
+        }
+      }
     }
   }, [])
 
@@ -73,19 +99,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const authResponse = await supabase?.auth.signInWithPassword({
         email,
         password,
-      })
+      }) || { data: null, error: new Error("Authentication failed") }
 
-      if (error) {
-        return { success: false, error: error.message }
+      if (authResponse.error) {
+        return { success: false, error: authResponse.error.message }
       }
 
-      const { data: userData } = await supabase.from("users").select("*").eq("id", data.user.id).single()
+      if (!authResponse.data || !authResponse.data.user) {
+        return { success: false, error: "Authentication failed" }
+      }
+
+      const { data: userData } = await supabase?.from("users").select("*").eq("id", authResponse.data.user.id).single() || { data: null }
 
       if (userData) {
-        setUser(userData as User)
+        setUser({
+          id: userData.id as string,
+          email: userData.email as string,
+          fullName: userData.full_name as string,
+          mobileNumber: userData.mobile_number as string,
+          gender: userData.gender as "male" | "female" | "other",
+          ageRange: userData.age_range as string,
+          county: userData.county as string,
+          interests: userData.interests as string[],
+          createdAt: userData.created_at as string
+        })
+        // Redirect based on user role
+        if (userData.role === 'admin') {
+          router.push(ROUTES.ADMIN.DASHBOARD)
+        } else {
+          router.push(ROUTES.DASHBOARD)
+        }
       }
 
       return { success: true }
@@ -97,25 +143,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const signUp = async (userData: any) => {
+  const signUp = async (userData: UserRegistrationFormValues) => {
     if (!isSupabaseConfigured()) {
       return { success: false, error: "Supabase is not configured" }
     }
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const authResponse = await supabase?.auth.signUp({
         email: userData.email,
         password: userData.password,
-      })
+      }) || { data: null, error: new Error("Signup failed") }
 
-      if (error) {
-        return { success: false, error: error.message }
+      if (authResponse.error) {
+        return { success: false, error: authResponse.error.message }
       }
 
-      if (data.user) {
-        const { error: profileError } = await supabase.from("users").insert([
+      if (authResponse.data?.user) {
+        const insertResponse = await supabase?.from("users").insert([
           {
-            id: data.user.id,
+            id: authResponse.data.user.id,
             email: userData.email,
             full_name: userData.fullName,
             mobile_number: userData.mobileNumber,
@@ -126,8 +172,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           },
         ])
 
-        if (profileError) {
-          return { success: false, error: profileError.message }
+        if (insertResponse?.error) {
+          return { success: false, error: insertResponse.error.message }
         }
       }
 
@@ -142,7 +188,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     if (isSupabaseConfigured()) {
-      await supabase!.auth.signOut()
+      await supabase?.auth.signOut()
     }
     setUser(null)
     router.push(ROUTES.HOME)

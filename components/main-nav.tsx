@@ -75,11 +75,11 @@ export function MainNav() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href={ROUTES.DASHBOARD}>Dashboard</Link>
+                <DropdownMenuItem>
+                  <Link href={ROUTES.DASHBOARD} className="flex w-full">Dashboard</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href={ROUTES.PROFILE}>Profile</Link>
+                <DropdownMenuItem>
+                  <Link href={ROUTES.PROFILE} className="flex w-full">Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => signOut()}>
@@ -100,7 +100,7 @@ export function MainNav() {
           )}
         </div>
 
-        <button className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+        <button type="button" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
@@ -128,14 +128,14 @@ export function MainNav() {
             <div className="flex flex-col space-y-2">
               {user ? (
                 <>
-                  <Link href={ROUTES.DASHBOARD} onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start">
-                      Dashboard
+                  <Link href={ROUTES.DASHBOARD} onClick={() => setMobileMenuOpen(false)} legacyBehavior={false}>
+                    <Button variant="ghost" className="w-full justify-start" asChild>
+                      <span>Dashboard</span>
                     </Button>
                   </Link>
-                  <Link href={ROUTES.PROFILE} onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start">
-                      Profile
+                  <Link href={ROUTES.PROFILE} onClick={() => setMobileMenuOpen(false)} legacyBehavior={false}>
+                    <Button variant="ghost" className="w-full justify-start" asChild>
+                      <span>Profile</span>
                     </Button>
                   </Link>
                   <Button

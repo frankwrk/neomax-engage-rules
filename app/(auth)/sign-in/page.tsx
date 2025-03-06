@@ -39,11 +39,10 @@ export default function SignInPage() {
     try {
       const result = await signIn(data.email, data.password)
 
-      if (result.success) {
-        router.push(ROUTES.DASHBOARD)
-      } else {
+      if (!result.success) {
         setError(result.error || "Invalid email or password")
       }
+      // No need to redirect here as the auth context will handle it
     } catch (err) {
       setError("An unexpected error occurred")
       console.error(err)

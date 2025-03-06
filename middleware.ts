@@ -50,10 +50,18 @@ export async function middleware(req: NextRequest) {
     }
 
     // If user is signed in but tries to access admin route without admin rights
-    // This would require checking admin status in the database
     if (isAdminRoute && session) {
-      // Here you would check if the user has admin rights
-      // For now, we'll just let them through and handle it in the page
+      // Check if the user has admin role
+      const { data: userData, error } = await supabase
+        .from("users")
+        .select("role")
+        .eq("id", session.user.id)
+        .single()
+      
+      // If there's an error or the user is not an admin, redirect to the dashboard
+      if (error || !userData || userData.role !== "admin") {
+        return NextResponse.redirect(new URL("/dashboard", req.url))
+      }
     }
     
     return res
