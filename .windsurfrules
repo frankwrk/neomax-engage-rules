@@ -14,7 +14,6 @@
 - Use Shadcn UI for components.
 
 # Data Fetching & Forms
-- Use TanStack Query (react-query) for frontend data fetching.
 - Use React Hook Form for form handling.
 - Use Zod for validation.
 
@@ -23,3 +22,400 @@
 
 # Backend & Database
 Use Supabase for database access.
+
+# **Neomax Engage – Website Design & Development Brief**
+
+## **Overview**
+
+Neomax Engage is a skill-based engagement competition platform where users watch ads, correctly answer a question, and earn a free entry into prize draws. The platform will prioritize security, scalability, and transparency, featuring automated winner selection, fraud prevention, and advertiser engagement tools.
+
+---
+
+## **Core Features & Requirements**
+
+### **1. User Registration & Authentication**
+
+✅ Secure account system with email-based signup and verification.  
+✅ Login/logout functionality with password recovery options (via email/SMS).  
+✅ Two-factor authentication (2FA) as an optional security feature.  
+✅ Profile section where users can track participation history and update details.  
+✅ Sign-up requirements:
+
+- **Email verification** to confirm identity and reduce fake accounts.
+- **Full Name** (for prize verification and transparency).
+- **Full Mobile Number** (to prevent duplicate accounts and ensure security).
+- **Gender** selection (male, female, other) for demographic insights.
+- **Age range selection** (ensuring compliance with regulations).
+- **County selection** (for regional targeting by advertisers).
+- **Interest selection** (users must select 3 out of 10 categories for personalized engagement).
+- **Agreement to Terms & Privacy Policy** (mandatory checkbox).
+
+---
+
+#### **Authentication Flow**
+
+```mermaid
+graph TD;
+    A[User Initiates Authentication] -->|Enters Email & Password| B[Server Validates Credentials];
+    B -->|Credentials Valid| C[Generate Access & Refresh Tokens];
+    B -->|Invalid Credentials| D[Return Error Message];
+    C -->|Send Tokens to Client| E[Store Token Securely (HTTP-only Cookie)];
+    E -->|Token Valid| F[Grant Access to Protected Resources];
+    E -->|Token Expired| G[Use Refresh Token to Obtain New Access Token];
+    G -->|Refresh Token Expired| H[Force Re-login];
+```
+
+### **2. Entry System & Tracking**
+
+✅ Users must watch an ad and answer a question correctly to enter.  
+✅ Each successful entry generates a unique entry number, stored in the user’s profile.  
+✅ Entry confirmation email sent after participation.  
+✅ Live entry counter displayed on homepage & competition pages.
+
+**Fair Play Rules:**
+
+- One entry per user per competition to prevent duplicate submissions.
+- If a user answers incorrectly, they can rewatch the ad and try again.
+- Once a correct answer is submitted, the entry is locked.
+
+**Daily Entry Limit:**
+
+- Users can enter one competition per day initially.
+- Future flexibility to increase limits dynamically based on user demand.
+
+---
+
+### **3. Automated Winner Selection & Live Draw System**
+
+✅ **Unique Entry Number Assignment** – Each participant receives a unique entry ID.  
+✅ **Automated Random Draw** – The system selects winners using a provably fair random number generator.  
+✅ **Live Draw Page** – Users can watch results in real-time.  
+✅ **Winner Announcement** – Results updated instantly in the user’s account.  
+✅ **Admin Dashboard Controls** for scheduling or manually triggering draws.  
+✅ **Live Streaming Compatibility** (for future expansion).  
+✅ **Winner Logs & Archive** – Maintain records for transparency and compliance.
+
+---
+
+### **4. Security & Anti-Fraud Measures**
+
+✅ **One Account Per Person Policy** (prevents multiple entries from the same individual).  
+✅ **Automated Fraud Detection & Prevention:**
+
+- Flagging multiple accounts from the same IP, device, or suspicious patterns.
+- Implementing reCAPTCHA to block bot entries.
+- Geo-restrictions to block VPN/proxy-based fraudulent entries.
+
+✅ **Full Mobile Number Requirement** to prevent multi-account fraud.  
+✅ **Prize Claim Verification:**
+
+- Admin verifies the winner’s full name, county, and mobile number before payout.
+- If details do not match or the winner cannot be reached, the entry is flagged for review.
+
+✅ **Security Considerations:**
+
+- **JWT (JSON Web Tokens)** for access control.
+- **Refresh token rotation** to prevent session hijacking.
+- **Rate limiting** on login attempts to prevent brute-force attacks.
+- **Session timeout & automatic logout** for inactive users.
+- **OAuth 2.0 / Social Logins (Google, Facebook) (Phase 2)**.
+
+---
+
+✅ **Data Retention & Cleanup:**
+
+- Non-winning entries are deleted two weeks after the draw to optimize system performance.
+- Winning entries are stored securely for transparency and prize verification.
+
+---
+
+### **5. Email & Notification System**
+
+✅ **Automated Email Notifications:**
+
+- Entry confirmations.
+- Winner announcements.
+- Future feature: Reminder emails for upcoming draws (Phase 2).
+
+✅ **Push Notification System** (Phase 2) for mobile and web alerts.  
+✅ **Admin Messaging Tools** – Ability to send mass notifications.
+
+---
+
+### **6. Website Design & UX**
+
+✅ **Modern, responsive design** optimized for mobile and desktop.  
+✅ **Neomax Engage branding** with a clean, engaging UI (black & orange theme).  
+✅ **Fast-loading pages** optimized for high traffic and smooth user experience.  
+✅ **Accessibility features** (e.g., screen reader support, keyboard navigation).  
+✅ **SEO Optimization** for organic search visibility.
+
+---
+
+### **7. Advertiser Engagement Features**
+
+✅ **Post-Entry Advertiser Engagement:**
+
+- After an entry, users see advertiser website links or promo codes.
+- Admin dashboard for managing advertiser-provided links & codes.
+
+✅ **Ad Management System (Phase 2):**
+
+- Structured system for advertisers to upload & manage their own ads.
+- Reporting dashboard for advertisers to track impressions, conversions, and engagement.
+
+---
+
+### **8. Admin Panel & Controls**
+
+✅ **Admin Dashboard Features:**
+
+- User & competition management.
+- Prize management system (mark winners, track fulfillment).
+- Fraud detection & security tools.
+- Advertiser content management.
+- Reporting tools for tracking user participation, demographics, and engagement trends.
+
+✅ **User Support System (Phase 2):**
+
+- Ticket-based support system for users with queries.
+- Automated FAQ bot for common issues.
+
+---
+
+## **Technical Considerations**
+
+✅ **Hosting:**
+
+- Scalable cloud-based hosting (AWS, GCP, or DigitalOcean).
+- CDN integration (Cloudflare) for fast content delivery.
+
+✅ **Database:**
+
+- Secure, scalable storage (PostgreSQL, MySQL, or Firebase).
+- Data encryption for sensitive user information.
+
+✅ **Authentication & Security:**
+
+- OAuth2.0 support for social login (Google, Facebook) (Phase 2).
+- 2FA for enhanced security.
+
+✅ **Video Ad Hosting:**
+
+- Integration with **Vimeo Business** or **self-hosted MP4s with adaptive streaming**.
+- Support for multiple ad formats (pre-roll, mid-roll, interactive).
+
+✅ **Email System:**
+
+- Integration with **SendGrid, Mailgun, or Resend** for transactional emails.
+
+✅ **Payment System (Future Monetization - Phase 2):**
+
+- Stripe/PayPal integration for potential paid competitions or premium user features.
+
+---
+
+## **Phase 1 Deliverables**
+
+✅ **User System:** Secure registration, authentication, and profile management.  
+✅ **Entry System:** Ad-watching, question-answering, and entry tracking.  
+✅ **Winner Selection:** Automated draws with admin dashboard controls.  
+✅ **Fraud Prevention:** Basic security checks, bot protection, and user verification.  
+✅ **Email Notifications:** Automated entry confirmations and winner announcements.  
+✅ **Admin Dashboard:** User, competition, and prize management tools.  
+✅ **Mobile-Friendly Website:** Optimized, fast-loading, and accessible.
+
+---
+
+# **Neomax Engage – Design System & Development Guide**
+
+## **1. Branding & Design Language**
+
+### **1.1 Color Palette**
+
+A **bold, engaging color scheme** designed to create excitement and trust while maintaining accessibility.
+
+| Name           | Hex Code                | Usage                              |
+| -------------- | ----------------------- | ---------------------------------- |
+| **Primary**    | `#FF4D00` (Neon Orange) | Main buttons, key CTAs, accents    |
+| **Secondary**  | `#0A1128` (Deep Navy)   | Headers, backgrounds, dark theme   |
+| **Accent**     | `#FFD700` (Gold)        | Prize highlights, winning moments  |
+| **Success**    | `#4CAF50` (Green)       | Success messages, positive actions |
+| **Error**      | `#D32F2F` (Red)         | Errors, alerts, critical actions   |
+| **Neutral**    | `#F5F5F5` (Light Gray)  | Backgrounds, dividers              |
+| **Text Dark**  | `#1E1E1E` (Dark Gray)   | Primary text color                 |
+| **Text Light** | `#FFFFFF` (White)       | Text on dark backgrounds           |
+
+✅ **Accessibility Compliance:** All text/background color pairings meet WCAG AA+ contrast standards.
+
+---
+
+### **1.2 Typography**
+
+Using **Inter** for modern readability and clarity.
+
+| Usage                   | Font  | Size                    | Weight          |
+| ----------------------- | ----- | ----------------------- | --------------- |
+| **Headings (H1-H3)**    | Inter | `text-4xl` - `text-2xl` | `font-bold`     |
+| **Subheadings (H4-H6)** | Inter | `text-xl` - `text-lg`   | `font-semibold` |
+| **Body Text**           | Inter | `text-base`             | `font-normal`   |
+| **Buttons & CTAs**      | Inter | `text-lg`               | `font-semibold` |
+| **Small Text & Labels** | Inter | `text-sm`               | `font-medium`   |
+
+✅ **Dynamic Scaling:** Uses Tailwind's `text-base md:text-lg` for fluid typography.
+
+---
+
+### **1.3 Spacing & Layout**
+
+Tailwind’s **8-point spacing system** for consistency.
+
+- **Small spacing:** `p-2` / `m-2`
+- **Medium spacing:** `p-4` / `m-4`
+- **Large spacing:** `p-8` / `m-8`
+- **Containers:** `max-w-7xl mx-auto`
+- **Grid Layouts:** `grid grid-cols-12 gap-6`
+
+---
+
+## **2. Component System (shadcn/UI)**
+
+✅ **Component Library:** Using [shadcn/UI](https://ui.shadcn.com/) for accessible, customizable UI elements.
+
+### **2.1 Buttons**
+
+```tsx
+import { Button } from "@/components/ui/button";
+
+<Button variant="default">Enter Competition</Button>
+<Button variant="secondary">View Winners</Button>
+<Button variant="destructive">Delete Account</Button>
+```
+
+| Variant       | Purpose          | Style                                         |
+| ------------- | ---------------- | --------------------------------------------- |
+| `default`     | Primary action   | `bg-primary text-white hover:bg-opacity-90`   |
+| `secondary`   | Secondary action | `bg-secondary text-white hover:bg-opacity-90` |
+| `destructive` | Dangerous action | `bg-error text-white hover:bg-opacity-90`     |
+
+---
+
+### **2.2 Forms & Inputs**
+
+```tsx
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+<Label htmlFor="email">Email Address</Label>
+<Input id="email" type="email" placeholder="Enter your email" />
+```
+
+✅ **Form Validation:** Using `react-hook-form` with Zod schema validation.
+
+---
+
+### **2.3 Cards**
+
+```tsx
+import { Card, CardContent } from "@/components/ui/card";
+
+<Card>
+  <CardContent>
+    <h2 className="text-xl font-semibold">Win a Trip to Bali!</h2>
+    <p className="text-sm text-gray-500">Watch an ad & enter for free.</p>
+  </CardContent>
+</Card>;
+```
+
+---
+
+## **3. Next.js 14 + TailwindCSS Setup**
+
+### **3.1 Project Structure**
+
+```
+/src
+  ├── /app
+  │   ├── /(auth)        # Authentication pages
+  │   ├── /(dashboard)   # User dashboard & competitions
+  │   ├── layout.tsx     # Root layout
+  │   ├── page.tsx       # Homepage
+  ├── /components
+  │   ├── /ui           # shadcn/UI components
+  │   ├── Button.tsx
+  │   ├── Card.tsx
+  ├── /lib
+  │   ├── auth.ts        # NextAuth config
+  │   ├── supabase.ts    # Supabase client
+```
+
+### **3.2 Essential Configurations**
+
+- **ESLint + Prettier**
+- **TypeScript Strict Mode**
+- **Middleware for security (rate-limiting, bot protection)**
+
+---
+
+## **4. Database Development (Supabase)**
+
+✅ **Automated Schema Deployment with Supabase CLI**
+
+### **4.1 Users Table**
+
+```sql
+create table users (
+  id uuid primary key default gen_random_uuid(),
+  email text unique not null,
+  full_name text not null,
+  mobile_number text not null,
+  gender text check (gender in ('male', 'female', 'other')),
+  age_range text not null,
+  county text not null,
+  interests text[],
+  created_at timestamp default now()
+);
+```
+
+### **4.2 Competitions Table**
+
+```sql
+create table competitions (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  description text not null,
+  ad_url text not null,
+  question text not null,
+  correct_answer text not null,
+  created_at timestamp default now(),
+  ends_at timestamp not null
+);
+```
+
+### **4.3 Winner Selection System**
+
+```sql
+create or replace function pick_winner(competition_id uuid)
+returns uuid as $$
+declare winner_id uuid;
+begin
+  select user_id into winner_id from entries
+  where competition_id = competition_id and correct = true
+  order by random() limit 1;
+
+  return winner_id;
+end;
+$$ language plpgsql;
+```
+
+✅ **Automated Deployment:** Using `supabase db push` for schema migrations.
+
+---
+
+## **Next Steps**
+
+1. **Build UI Components** → Implement shadcn/UI for all interactions.
+2. **Develop API Routes** → Secure authentication and data retrieval using Next.js Server Actions.
+3. **Deploy on Vercel** → Connect to Supabase and optimize for performance.
+
+---
