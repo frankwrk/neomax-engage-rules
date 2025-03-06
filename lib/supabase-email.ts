@@ -2,7 +2,6 @@
  * Supabase email template customization utilities
  * Allows overriding default Supabase auth emails with custom React email templates
  */
-import { renderToStaticMarkup } from 'react-dom/server';
 import { createClient } from '@supabase/supabase-js';
 import { resend } from './email';
 import { getBaseUrl, replacePlaceholders } from './url-config';
@@ -72,8 +71,26 @@ async function customizeEmailTemplate({ type, subject }: CustomEmailTemplateOpti
       confirmationLink: '{{ .ConfirmationURL }}',
     });
     
-    // Convert React component to HTML string
-    let htmlContent = renderToStaticMarkup(emailTemplate);
+    // We'll use a template string approach instead of renderToStaticMarkup
+    // This is a simplified approach for Supabase template emails
+    let htmlContent = `
+      <html>
+        <body>
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #f97316;">Welcome to Neomax Engage!</h1>
+            <p>Hello {{ .UserName }},</p>
+            <p>Thank you for signing up for Neomax Engage. Please confirm your email address by clicking the button below:</p>
+            <p>
+              <a href="{{ .ConfirmationURL }}" style="background-color: #f97316; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px; display: inline-block;">
+                Confirm my email
+              </a>
+            </p>
+            <p>If you didn't create an account, you can safely ignore this email.</p>
+            <p>Thanks,<br/>The Neomax Engage Team</p>
+          </div>
+        </body>
+      </html>
+    `;
     
     // Replace any baseUrl placeholders with the actual URL
     htmlContent = replacePlaceholders(htmlContent);
