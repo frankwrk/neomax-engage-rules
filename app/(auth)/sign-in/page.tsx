@@ -55,26 +55,26 @@ export default function SignInPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <MainNav />
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-12 bg-secondary">
         <div className="container max-w-md">
-          <Card>
+          <Card className="card-dark">
             <CardHeader>
-              <CardTitle className="text-2xl">Sign In</CardTitle>
-              <CardDescription>Sign in to your account to enter competitions and check your prizes.</CardDescription>
+              <CardTitle className="text-2xl text-white">Sign In</CardTitle>
+              <CardDescription className="text-gray-300">Sign in to your account to enter competitions and check your prizes.</CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmit(onSubmit)}>
               <CardContent className="space-y-4">
                 {error && <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm">{error}</div>}
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-gray-300">Email</Label>
                   <Input id="email" type="email" placeholder="you@example.com" {...register("email")} />
                   {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password" className="text-gray-300">Password</Label>
                     <Link href="/forgot-password" className="text-sm text-primary hover:underline">
                       Forgot password?
                     </Link>
@@ -88,7 +88,7 @@ export default function SignInPage() {
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Signing In..." : "Sign In"}
                 </Button>
-                <p className="text-sm text-center text-muted-foreground">
+                <p className="text-sm text-center text-gray-300">
                   Don't have an account?{" "}
                   <Link href={ROUTES.SIGN_UP} className="text-primary hover:underline">
                     Sign Up

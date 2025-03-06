@@ -2,6 +2,100 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Legal document styles */
+.legal-document h1,
+.legal-document h2,
+.legal-document h3,
+.legal-document h4,
+.legal-document h5,
+.legal-document h6 {
+  color: white;
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-weight: 600;
+}
+
+.legal-document h1 {
+  font-size: 2rem;
+}
+
+.legal-document h2 {
+  font-size: 1.5rem;
+}
+
+.legal-document h3 {
+  font-size: 1.25rem;
+}
+
+.legal-document p,
+.legal-document ul,
+.legal-document ol {
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+
+.legal-document strong,
+.legal-document b {
+  color: white;
+  font-weight: 600;
+}
+
+.legal-document a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+}
+
+.legal-document ul,
+.legal-document ol {
+  padding-left: 1.5rem;
+}
+
+.legal-document ul li,
+.legal-document ol li {
+  margin-bottom: 0.5em;
+}
+
+.legal-document ul {
+  list-style-type: disc;
+}
+
+.legal-document ol {
+  list-style-type: decimal;
+}
+
+.legal-document blockquote {
+  border-left: 4px solid hsl(var(--primary));
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  font-style: italic;
+}
+
+.legal-document hr {
+  border: 0;
+  border-top: 1px solid rgb(55 65 81);
+  margin: 2em 0;
+}
+
+.legal-document table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1em;
+}
+
+.legal-document th {
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem;
+  border-bottom: 1px solid rgb(55 65 81);
+  text-align: left;
+}
+
+.legal-document td {
+  padding: 0.75rem;
+  border-bottom: 1px solid rgb(55 65 81);
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -84,11 +178,25 @@
 
 @layer components {
   .hero-gradient {
-    @apply bg-gradient-to-r from-secondary via-secondary to-primary/90;
+    @apply bg-secondary text-white;
+  }
+  
+  .text-text-light {
+    @apply text-white;
+  }
+
+  .bg-neutral {
+    @apply bg-secondary text-white;
+  }
+  
+  .card-dark {
+    background-color: hsl(222deg 37.06% 20.21% / 80%) !important;
+    @apply border border-gray-700 text-white;
   }
 
   .prize-card {
-    @apply relative overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md;
+    background-color: hsl(222deg 37.06% 20.21% / 80%);
+    @apply relative overflow-hidden rounded-lg border border-gray-700 text-white shadow-sm transition-all hover:shadow-md hover:border-gray-600;
   }
 
   .prize-card-winner {
@@ -96,7 +204,7 @@
   }
 
   .competition-badge {
-    @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+    @apply inline-flex items-center rounded-full border border-gray-700 bg-secondary/90 text-white px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
   }
 
   .competition-badge-active {

@@ -10,7 +10,7 @@ export default function DashboardLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <MainNav />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 bg-secondary">{children}</main>
       <Footer />
     </div>
   )

@@ -61,7 +61,7 @@ export default function DashboardPage() {
     return (
       <div className="container py-12">
         <div className="flex items-center justify-center h-64">
-          <p className="text-muted-foreground">Loading your dashboard...</p>
+          <p className="text-gray-300">Loading your dashboard...</p>
         </div>
       </div>
     )
@@ -70,47 +70,47 @@ export default function DashboardPage() {
   return (
     <div className="container py-12">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Welcome back, {user?.fullName?.split(" ")[0] || "User"}</h1>
-        <p className="text-muted-foreground mt-1">Here's what's happening with your competitions and entries.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-white">Welcome back, {user?.fullName?.split(" ")[0] || "User"}</h1>
+        <p className="text-gray-300 mt-1">Here's what's happening with your competitions and entries.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card>
+        <Card className="card-dark">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Competitions</CardTitle>
-            <Trophy className="h-4 w-4 text-muted-foreground" />
+            <Trophy className="h-4 w-4 text-gray-300" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{activeCompetitions.length}</div>
-            <p className="text-xs text-muted-foreground">Competitions you can enter today</p>
+            <p className="text-xs text-gray-300">Competitions you can enter today</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="card-dark">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Your Entries</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <Calendar className="h-4 w-4 text-gray-300" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{userEntries.length}</div>
-            <p className="text-xs text-muted-foreground">Total competition entries</p>
+            <p className="text-xs text-gray-300">Total competition entries</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="card-dark">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Correct Answers</CardTitle>
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+            <CheckCircle className="h-4 w-4 text-gray-300" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{userEntries.filter((entry) => entry.correct).length}</div>
-            <p className="text-xs text-muted-foreground">Entries with correct answers</p>
+            <p className="text-xs text-gray-300">Entries with correct answers</p>
           </CardContent>
         </Card>
       </div>
 
       <Tabs defaultValue="competitions" className="space-y-4">
-        <TabsList>
+        <TabsList className="bg-secondary/50 border border-gray-700">
           <TabsTrigger value="competitions">Active Competitions</TabsTrigger>
           <TabsTrigger value="entries">Your Entries</TabsTrigger>
         </TabsList>
@@ -120,7 +120,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {activeCompetitions.map((competition) => (
                 <Card key={competition.id} className="prize-card">
-                  <div className="aspect-video bg-muted relative">
+                  <div className="aspect-video bg-secondary/50 relative">
                     <div className="absolute inset-0 flex items-center justify-center">
                       <img
                         src="/placeholder.svg?height=200&width=400"
@@ -134,8 +134,8 @@ export default function DashboardPage() {
                       <span className="competition-badge competition-badge-active">Active</span>
                     </div>
                     <h3 className="text-xl font-semibold mb-2">{competition.title}</h3>
-                    <p className="text-muted-foreground mb-4">{truncateText(competition.description, 100)}</p>
-                    <p className="text-sm text-muted-foreground mb-4">Ends: {formatDate(competition.endsAt)}</p>
+                    <p className="text-gray-300 mb-4">{truncateText(competition.description, 100)}</p>
+                    <p className="text-sm text-gray-300 mb-4">Ends: {formatDate(competition.endsAt)}</p>
                   </CardContent>
                   <CardFooter>
                     <Link href={ROUTES.COMPETITION(competition.id)} className="w-full">
@@ -146,9 +146,9 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : (
-            <Card>
+            <Card className="card-dark">
               <CardContent className="py-8 text-center">
-                <p className="text-muted-foreground">
+                <p className="text-gray-300">
                   There are no active competitions at the moment. Check back soon!
                 </p>
               </CardContent>
@@ -166,15 +166,15 @@ export default function DashboardPage() {
           {userEntries.length > 0 ? (
             <div className="space-y-4">
               {userEntries.map((entry) => (
-                <Card key={entry.id}>
+                <Card key={entry.id} className="card-dark">
                   <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                       <div>
                         <h3 className="text-lg font-semibold">
                           {(entry as any).competitions?.title || "Competition Entry"}
                         </h3>
-                        <p className="text-sm text-muted-foreground">Entry Number: {entry.entryNumber}</p>
-                        <p className="text-sm text-muted-foreground">Date: {formatDate(entry.createdAt)}</p>
+                        <p className="text-sm text-gray-300">Entry Number: {entry.entryNumber}</p>
+                        <p className="text-sm text-gray-300">Date: {formatDate(entry.createdAt)}</p>
                       </div>
                       <div className="mt-4 md:mt-0">
                         <span
@@ -189,9 +189,9 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : (
-            <Card>
+            <Card className="card-dark">
               <CardContent className="py-8 text-center">
-                <p className="text-muted-foreground">
+                <p className="text-gray-300">
                   You haven't entered any competitions yet. Start now to win prizes!
                 </p>
               </CardContent>

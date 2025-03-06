@@ -1,6 +1,7 @@
 import React from 'react';
 import { MainNav } from "@/components/main-nav";
 import { Footer } from "@/components/footer";
+import { CookieConsent } from "@/components/cookie-consent";
 
 /**
  * Layout component for legal pages using the same header and footer as the main app
@@ -16,10 +17,11 @@ export default function LegalLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <MainNav />
-      <main className="flex-1">
+      <main className="flex-1 py-12 bg-secondary">
         {children}
       </main>
       <Footer />
+      <CookieConsent />
     </div>
   );
 }

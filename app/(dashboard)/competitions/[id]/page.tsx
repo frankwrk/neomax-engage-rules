@@ -151,10 +151,10 @@ export default function CompetitionDetailPage() {
   if (!competition) {
     return (
       <div className="container py-12">
-        <Card>
+        <Card className="card-dark">
           <CardContent className="py-12 text-center">
             <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Competition Not Found</h2>
+            <h2 className="text-2xl font-bold mb-2 text-gray-300">Competition Not Found</h2>
             <p className="text-muted-foreground mb-6">
               The competition you're looking for doesn't exist or has been removed.
             </p>
@@ -170,7 +170,7 @@ export default function CompetitionDetailPage() {
   return (
     <div className="container py-12">
       <div className="max-w-4xl mx-auto">
-        <Card>
+        <Card className="card-dark">
           <CardHeader>
             <div className="mb-2">
               <span
@@ -179,7 +179,7 @@ export default function CompetitionDetailPage() {
                 {isActive ? "Active" : "Ended"}
               </span>
             </div>
-            <CardTitle className="text-2xl">{competition.title}</CardTitle>
+            <CardTitle className="text-2xl text-gray-300">{competition.title}</CardTitle>
             <CardDescription>
               {isActive
                 ? `This competition ends on ${formatDate(competition.endsAt)}`
@@ -212,7 +212,7 @@ export default function CompetitionDetailPage() {
                         onEnded={handleVideoEnded}
                       />
                     </div>
-                    <p className="text-sm text-muted-foreground text-center">
+                    <p className="text-sm text-gray-300 text-center">
                       Watch the full video to unlock the entry form
                     </p>
                   </div>
@@ -234,9 +234,9 @@ export default function CompetitionDetailPage() {
                   )}
 
                   <form onSubmit={handleSubmit(onSubmit)}>
-                    <Card>
+                    <Card className="card-dark">
                       <CardHeader>
-                        <CardTitle className="text-lg">Answer the Question to Enter</CardTitle>
+                        <CardTitle className="text-lg text-gray-300">Answer the Question to Enter</CardTitle>
                         <CardDescription>
                           Based on the ad you just watched, please answer the following question:
                         </CardDescription>
@@ -244,10 +244,10 @@ export default function CompetitionDetailPage() {
                       <CardContent>
                         <div className="space-y-4">
                           <div>
-                            <h3 className="font-medium mb-2">{competition.question}</h3>
+                            <h3 className="font-medium mb-2 text-gray-300">{competition.question}</h3>
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="answer">Your Answer</Label>
+                            <Label htmlFor="answer" className="text-gray-300">Your Answer</Label>
                             <Input id="answer" {...register("answer")} disabled={!videoWatched || submitting} />
                             {errors.answer && <p className="text-sm text-destructive">{errors.answer.message}</p>}
                           </div>
@@ -265,8 +265,8 @@ export default function CompetitionDetailPage() {
             ) : (
               <div className="bg-muted p-6 rounded-lg text-center">
                 <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Competition Ended</h3>
-                <p className="text-muted-foreground">
+                <h3 className="text-xl font-semibold mb-2 text-gray-300">Competition Ended</h3>
+                <p className="text-gray-300">
                   This competition has ended. Check out our other active competitions.
                 </p>
               </div>

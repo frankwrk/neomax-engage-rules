@@ -1,5 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
+import { LegalDocument } from '@/components/legal-document';
 
 export const metadata: Metadata = {
   title: 'Terms and Conditions | Neomax Engage',
@@ -12,13 +13,11 @@ export const metadata: Metadata = {
  */
 export default function TermsPage() {
   return (
-    <div className="container max-w-4xl py-12">
-      <h1 className="mb-8 text-3xl font-bold text-center">Terms and Conditions</h1>
-      <p className="text-sm text-muted-foreground text-center mb-8">
-        Last updated: March 6, 2025
-      </p>
-
-      <div className="prose prose-stone dark:prose-invert max-w-none">
+    <LegalDocument 
+      title="Terms and Conditions" 
+      lastUpdated="March 6, 2025"
+      version="1.1"
+    >
         <h2>1. Introduction</h2>
         <p>
           Welcome to Neomax Engage. These Terms and Conditions govern your use of the Neomax Engage platform
@@ -159,7 +158,6 @@ export default function TermsPage() {
           Email: legal@neomax-engage.com<br />
           Address: 123 Engagement Street, London, UK
         </p>
-      </div>
-    </div>
+    </LegalDocument>
   );
 }

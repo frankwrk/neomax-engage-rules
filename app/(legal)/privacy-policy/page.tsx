@@ -1,5 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
+import { LegalDocument } from '@/components/legal-document';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Neomax Engage',
@@ -12,13 +13,11 @@ export const metadata: Metadata = {
  */
 export default function PrivacyPolicyPage() {
   return (
-    <div className="container max-w-4xl py-12">
-      <h1 className="mb-8 text-3xl font-bold text-center">Privacy Policy</h1>
-      <p className="text-sm text-muted-foreground text-center mb-8">
-        Last updated: March 6, 2025
-      </p>
-
-      <div className="prose prose-stone dark:prose-invert max-w-none">
+    <LegalDocument 
+      title="Privacy Policy" 
+      lastUpdated="March 6, 2025"
+      version="1.2"
+    >
         <h2>1. Introduction</h2>
         <p>
           At Neomax Engage, we take your privacy seriously. This Privacy Policy explains how we collect, use, 
@@ -208,7 +207,6 @@ export default function PrivacyPolicyPage() {
           Email: privacy@neomax-engage.com<br />
           Address: 123 Engagement Street, London, UK
         </p>
-      </div>
-    </div>
+    </LegalDocument>
   );
 }

@@ -63,7 +63,7 @@ export default function WinnersPage() {
     return (
       <div className="container py-12">
         <div className="flex items-center justify-center h-64">
-          <p className="text-muted-foreground">Loading winners...</p>
+          <p className="text-gray-300">Loading winners...</p>
         </div>
       </div>
     )
@@ -72,23 +72,23 @@ export default function WinnersPage() {
   return (
     <div className="container py-12">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Winners</h1>
-        <p className="text-muted-foreground mt-1">Congratulations to all our lucky winners!</p>
+        <h1 className="text-3xl font-bold tracking-tight text-white">Winners</h1>
+        <p className="text-gray-300 mt-1">Congratulations to all our lucky winners!</p>
       </div>
 
       {winners.length > 0 ? (
         <div className="space-y-6">
           {winners.map((winner) => (
-            <Card key={winner.id} className="overflow-hidden">
-              <div className="bg-accent h-2" />
+            <Card key={winner.id} className="overflow-hidden card-dark">
+              <div className="bg-primary h-2" />
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex items-center justify-center bg-accent/10 rounded-full p-4 h-16 w-16">
-                    <Trophy className="h-8 w-8 text-accent" />
+                  <div className="flex items-center justify-center bg-primary/30 rounded-full p-4 h-16 w-16">
+                    <Trophy className="h-8 w-8 text-primary" />
                   </div>
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold mb-1">{winner.competitions?.title || "Competition Prize"}</h3>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-gray-300 mb-4">
                       {winner.competitions?.description || "Prize description"}
                     </p>
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-sm">
@@ -109,10 +109,10 @@ export default function WinnersPage() {
           ))}
         </div>
       ) : (
-        <Card>
+        <Card className="card-dark">
           <CardContent className="py-12 text-center">
-            <h3 className="text-lg font-medium mb-2">No Winners Yet</h3>
-            <p className="text-muted-foreground">Check back soon to see our latest winners!</p>
+            <h3 className="text-lg font-medium mb-2 text-white">No Winners Yet</h3>
+            <p className="text-gray-300">Check back soon to see our latest winners!</p>
           </CardContent>
         </Card>
       )}

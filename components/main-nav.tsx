@@ -41,12 +41,12 @@ export function MainNav() {
   ]
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-700 bg-secondary text-white">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6 md:gap-10">
           <Link href={ROUTES.HOME} className="flex items-center space-x-2">
             <span className="text-2xl font-bold text-primary">Neomax</span>
-            <span className="text-2xl font-bold text-secondary">Engage</span>
+            <span className="text-2xl font-bold text-white">Engage</span>
           </Link>
           <nav className="hidden md:flex gap-6">
             {routes.map((route) => (
@@ -55,7 +55,7 @@ export function MainNav() {
                 href={route.href}
                 className={cn(
                   "text-sm font-medium transition-colors hover:text-primary",
-                  route.active ? "text-primary" : "text-muted-foreground",
+                  route.active ? "text-primary" : "text-gray-300",
                 )}
               >
                 {route.label}

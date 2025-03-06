@@ -77,146 +77,161 @@ export default function SignUpPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <MainNav />
-      <main className="flex-1 py-12">
-        <div className="container max-w-md">
-          <Card>
+      <main className="flex-1 py-12 bg-secondary">
+        <div className="container max-w-3xl">
+          <Card className="card-dark">
             <CardHeader>
-              <CardTitle className="text-2xl">Create an Account</CardTitle>
-              <CardDescription>Sign up to start entering competitions and winning prizes.</CardDescription>
+              <CardTitle className="text-2xl text-white">Create an Account</CardTitle>
+              <CardDescription className="text-gray-300">Sign up to start entering competitions and winning prizes.</CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmit(onSubmit)}>
               <CardContent className="space-y-6">
-                {error && <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm">{error}</div>}
+                {error && <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm mb-4">{error}</div>}
 
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="you@example.com" {...register("email")} />
-                  {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" {...register("password")} />
-                  {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input id="confirmPassword" type="password" {...register("confirmPassword")} />
-                  {errors.confirmPassword && (
-                    <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
-                  <Input id="fullName" type="text" {...register("fullName")} />
-                  {errors.fullName && <p className="text-sm text-destructive">{errors.fullName.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="mobileNumber">Mobile Number</Label>
-                  <Input id="mobileNumber" type="tel" placeholder="+353 12 345 6789" {...register("mobileNumber")} />
-                  {errors.mobileNumber && <p className="text-sm text-destructive">{errors.mobileNumber.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Gender</Label>
-                  <RadioGroup
-                    onValueChange={(value) => setValue("gender", value as "male" | "female" | "other")}
-                    defaultValue={watch("gender")}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="male" id="male" />
-                      <Label htmlFor="male">Male</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Left Column */}
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-gray-300">Email</Label>
+                      <Input id="email" type="email" placeholder="you@example.com" {...register("email")} />
+                      {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="female" id="female" />
-                      <Label htmlFor="female">Female</Label>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="password" className="text-gray-300">Password</Label>
+                      <Input id="password" type="password" {...register("password")} />
+                      {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="other" id="other" />
-                      <Label htmlFor="other">Other</Label>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmPassword" className="text-gray-300">Confirm Password</Label>
+                      <Input id="confirmPassword" type="password" {...register("confirmPassword")} />
+                      {errors.confirmPassword && (
+                        <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
+                      )}
                     </div>
-                  </RadioGroup>
-                  {errors.gender && <p className="text-sm text-destructive">{errors.gender.message}</p>}
+
+                    <div className="space-y-2">
+                      <Label htmlFor="fullName" className="text-gray-300">Full Name</Label>
+                      <Input id="fullName" type="text" {...register("fullName")} />
+                      {errors.fullName && <p className="text-sm text-destructive">{errors.fullName.message}</p>}
+                    </div>
+                  </div>
+
+                  {/* Right Column */}
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="mobileNumber" className="text-gray-300">Mobile Number</Label>
+                      <Input id="mobileNumber" type="tel" placeholder="+353 12 345 6789" {...register("mobileNumber")} />
+                      {errors.mobileNumber && <p className="text-sm text-destructive">{errors.mobileNumber.message}</p>}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-gray-300">Gender</Label>
+                      <div className="h-10 flex items-center"> 
+                        <RadioGroup
+                          onValueChange={(value) => setValue("gender", value as "male" | "female" | "other")}
+                          defaultValue={watch("gender")}
+                          className="flex space-x-6"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="male" id="male" />
+                            <Label htmlFor="male" className="text-gray-300">Male</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="female" id="female" />
+                            <Label htmlFor="female" className="text-gray-300">Female</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="other" id="other" />
+                            <Label htmlFor="other" className="text-gray-300">Other</Label>
+                          </div>
+                        </RadioGroup>
+                      </div>
+                      {errors.gender && <p className="text-sm text-destructive">{errors.gender.message}</p>}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="ageRange" className="text-gray-300">Age Range</Label>
+                      <Select onValueChange={(value) => setValue("ageRange", value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select age range" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {AGE_RANGES.map((range) => (
+                            <SelectItem key={range} value={range}>
+                              {range}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors.ageRange && <p className="text-sm text-destructive">{errors.ageRange.message}</p>}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="county" className="text-gray-300">County</Label>
+                      <Select onValueChange={(value) => setValue("county", value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select county" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {COUNTIES.map((county) => (
+                            <SelectItem key={county} value={county}>
+                              {county}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors.county && <p className="text-sm text-destructive">{errors.county.message}</p>}
+                    </div>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="ageRange">Age Range</Label>
-                  <Select onValueChange={(value) => setValue("ageRange", value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select age range" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {AGE_RANGES.map((range) => (
-                        <SelectItem key={range} value={range}>
-                          {range}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.ageRange && <p className="text-sm text-destructive">{errors.ageRange.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="county">County</Label>
-                  <Select onValueChange={(value) => setValue("county", value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select county" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {COUNTIES.map((county) => (
-                        <SelectItem key={county} value={county}>
-                          {county}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.county && <p className="text-sm text-destructive">{errors.county.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Interests (select at least 3)</Label>
-                  <div className="grid grid-cols-2 gap-2">
+                {/* Interests section - full width */}
+                <div className="col-span-1 md:col-span-2 space-y-2 mt-6">
+                  <Label className="text-gray-300">Interests (select at least 3)</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
                     {INTEREST_CATEGORIES.map((interest) => (
-                      <div key={interest} className="flex items-center space-x-2">
+                      <div key={interest} className="flex items-center space-x-3">
                         <Checkbox
                           id={interest}
                           checked={selectedInterests.includes(interest)}
                           onCheckedChange={(checked) => handleInterestChange(interest, checked as boolean)}
                         />
-                        <Label htmlFor={interest}>{interest}</Label>
+                        <Label htmlFor={interest} className="text-gray-300">{interest}</Label>
                       </div>
                     ))}
                   </div>
                   {errors.interests && <p className="text-sm text-destructive">{errors.interests.message}</p>}
                 </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="termsAccepted"
-                    onCheckedChange={(checked) => setValue("termsAccepted", checked as boolean)}
-                  />
-                  <Label htmlFor="termsAccepted" className="text-sm">
-                    I agree to the{" "}
-                    <Link href="/terms" className="text-primary hover:underline">
-                      Terms & Conditions
-                    </Link>{" "}
-                    and{" "}
-                    <Link href="/privacy-policy" className="text-primary hover:underline">
-                      Privacy Policy
-                    </Link>
-                  </Label>
+                
+                {/* Terms acceptance - full width */}
+                <div className="col-span-1 md:col-span-2 mt-6">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <Checkbox
+                      id="termsAccepted"
+                      onCheckedChange={(checked) => setValue("termsAccepted", checked as boolean)}
+                    />
+                    <Label htmlFor="termsAccepted" className="text-sm text-gray-300">
+                      I agree to the{" "}
+                      <Link href="/terms" className="text-primary hover:underline">
+                        Terms & Conditions
+                      </Link>{" "}
+                      and{" "}
+                      <Link href="/privacy-policy" className="text-primary hover:underline">
+                        Privacy Policy
+                      </Link>
+                    </Label>
+                  </div>
+                  {errors.termsAccepted && <p className="text-sm text-destructive">{errors.termsAccepted.message}</p>}
                 </div>
-                {errors.termsAccepted && <p className="text-sm text-destructive">{errors.termsAccepted.message}</p>}
               </CardContent>
 
               <CardFooter className="flex flex-col space-y-4">
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Creating Account..." : "Create Account"}
                 </Button>
-                <p className="text-sm text-center text-muted-foreground">
+                <p className="text-sm text-center text-gray-300">
                   Already have an account?{" "}
                   <Link href={ROUTES.SIGN_IN} className="text-primary hover:underline">
                     Sign In

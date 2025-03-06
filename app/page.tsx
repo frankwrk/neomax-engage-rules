@@ -8,9 +8,9 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       <MainNav />
-      <main className="flex-1">
+      <main className="flex-1 bg-secondary text-white">
         {/* Hero Section */}
-        <section className="hero-gradient py-20 md:py-32 text-text-light">
+        <section className="py-20 md:py-32 text-white">
           <div className="container">
             <div className="max-w-3xl mx-auto text-center space-y-6">
               <h1 className="text-4xl md:text-6xl font-bold">Watch. Answer. Win.</h1>
@@ -29,38 +29,38 @@ export default function Home() {
         </section>
 
         {/* How It Works Section */}
-        <section className="py-16 md:py-24 bg-neutral">
+        <section className="py-16 md:py-24 border-t border-gray-700">
           <div className="container">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-secondary">How It Works</h2>
-              <p className="mt-4 text-lg text-muted-foreground">Three simple steps to win amazing prizes</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-white">How It Works</h2>
+              <p className="mt-4 text-lg text-gray-300">Three simple steps to win amazing prizes</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white p-8 rounded-lg shadow-sm text-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div style={{backgroundColor: "hsl(222deg 37.06% 20.21% / 80%)"}} className="border border-gray-700 p-8 rounded-lg shadow-sm text-center">
+                <div className="w-16 h-16 bg-primary/30 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-2xl font-bold text-primary">1</span>
                 </div>
                 <h3 className="text-xl font-semibold mb-4">Watch an Ad</h3>
-                <p className="text-muted-foreground">
+                <p className="text-gray-300">
                   Watch a short advertisement from our sponsors to qualify for entry.
                 </p>
               </div>
 
-              <div className="bg-white p-8 rounded-lg shadow-sm text-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div style={{backgroundColor: "hsl(222deg 37.06% 20.21% / 80%)"}} className="border border-gray-700 p-8 rounded-lg shadow-sm text-center">
+                <div className="w-16 h-16 bg-primary/30 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-2xl font-bold text-primary">2</span>
                 </div>
                 <h3 className="text-xl font-semibold mb-4">Answer a Question</h3>
-                <p className="text-muted-foreground">Answer a simple question about the ad you just watched.</p>
+                <p className="text-gray-300">Answer a simple question about the ad you just watched.</p>
               </div>
 
-              <div className="bg-white p-8 rounded-lg shadow-sm text-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div style={{backgroundColor: "hsl(222deg 37.06% 20.21% / 80%)"}} className="border border-gray-700 p-8 rounded-lg shadow-sm text-center">
+                <div className="w-16 h-16 bg-primary/30 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-2xl font-bold text-primary">3</span>
                 </div>
                 <h3 className="text-xl font-semibold mb-4">Win Prizes</h3>
-                <p className="text-muted-foreground">
+                <p className="text-gray-300">
                   Get entered into the prize draw for a chance to win amazing rewards.
                 </p>
               </div>
@@ -69,11 +69,11 @@ export default function Home() {
         </section>
 
         {/* Featured Prizes Section */}
-        <section className="py-16 md:py-24">
+        <section className="py-16 md:py-24 border-t border-gray-700">
           <div className="container">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-secondary">Featured Prizes</h2>
-              <p className="mt-4 text-lg text-muted-foreground">Check out some of our exciting prizes up for grabs</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-white">Featured Prizes</h2>
+              <p className="mt-4 text-lg text-gray-300">Check out some of our exciting prizes up for grabs</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -140,42 +140,42 @@ export default function Home() {
         </section>
 
         {/* Testimonials Section */}
-        <section className="py-16 md:py-24 bg-neutral">
+        <section className="py-16 md:py-24 border-t border-gray-700">
           <div className="container">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-secondary">Winner Stories</h2>
-              <p className="mt-4 text-lg text-muted-foreground">Hear from some of our lucky winners</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-white">Winner Stories</h2>
+              <p className="mt-4 text-lg text-gray-300">Hear from some of our lucky winners</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-white p-8 rounded-lg shadow-sm">
+              <div style={{backgroundColor: "hsl(222deg 37.06% 20.21% / 80%)"}} className="border border-gray-700 p-8 rounded-lg shadow-sm">
                 <div className="flex items-center mb-6">
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mr-4">
                     <span className="text-xl font-bold text-primary">J</span>
                   </div>
                   <div>
                     <h3 className="font-semibold">John D.</h3>
-                    <p className="text-sm text-muted-foreground">Dublin</p>
+                    <p className="text-sm text-gray-300">Dublin</p>
                   </div>
                 </div>
-                <p className="text-muted-foreground">
+                <p className="text-gray-300">
                   "I couldn't believe it when I got the call saying I'd won the weekend getaway! The whole process was
                   so simple - I just watched an ad, answered a question, and a week later I was packing my bags for a
                   5-star hotel stay!"
                 </p>
               </div>
 
-              <div className="bg-white p-8 rounded-lg shadow-sm">
+              <div style={{backgroundColor: "hsl(222deg 37.06% 20.21% / 80%)"}} className="border border-gray-700 p-8 rounded-lg shadow-sm">
                 <div className="flex items-center mb-6">
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mr-4">
                     <span className="text-xl font-bold text-primary">S</span>
                   </div>
                   <div>
                     <h3 className="font-semibold">Sarah M.</h3>
-                    <p className="text-sm text-muted-foreground">Cork</p>
+                    <p className="text-sm text-gray-300">Cork</p>
                   </div>
                 </div>
-                <p className="text-muted-foreground">
+                <p className="text-gray-300">
                   "Neomax Engage is my favorite way to win prizes. It's free to enter, takes just a minute of my time,
                   and I've already won twice! My new smartphone arrived just three days after the draw."
                 </p>
@@ -185,11 +185,11 @@ export default function Home() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 md:py-24 hero-gradient text-text-light">
+        <section className="py-16 md:py-24 border-t border-gray-700">
           <div className="container">
             <div className="max-w-3xl mx-auto text-center space-y-6">
               <h2 className="text-3xl md:text-4xl font-bold">Ready to Start Winning?</h2>
-              <p className="text-lg">Join thousands of winners today. Sign up is quick, easy, and completely free.</p>
+              <p className="text-lg text-gray-300">Join thousands of winners today. Sign up is quick, easy, and completely free.</p>
               <div className="pt-4">
                 <Link href={ROUTES.SIGN_UP}>
                   <Button size="lg" className="bg-primary hover:bg-primary/90 text-white">

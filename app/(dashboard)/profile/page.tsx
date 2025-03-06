@@ -94,8 +94,8 @@ export default function ProfilePage() {
   return (
     <div className="container py-12">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Your Profile</h1>
-        <p className="text-muted-foreground mt-1">Manage your account details and preferences.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-300">Your Profile</h1>
+        <p className="text-gray-300 mt-1">Manage your account details and preferences.</p>
       </div>
 
       <Tabs defaultValue="profile" className="space-y-4">
@@ -105,9 +105,9 @@ export default function ProfilePage() {
         </TabsList>
 
         <TabsContent value="profile">
-          <Card>
+          <Card className="card-dark">
             <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
+              <CardTitle className="text-gray-300">Profile Information</CardTitle>
               <CardDescription>Update your personal details and preferences.</CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -127,41 +127,41 @@ export default function ProfilePage() {
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
+                  <Label htmlFor="fullName" className="text-gray-300">Full Name</Label>
                   <Input id="fullName" type="text" {...register("fullName")} />
                   {errors.fullName && <p className="text-sm text-destructive">{errors.fullName.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="mobileNumber">Mobile Number</Label>
+                  <Label htmlFor="mobileNumber" className="text-gray-300">Mobile Number</Label>
                   <Input id="mobileNumber" type="tel" placeholder="+353 12 345 6789" {...register("mobileNumber")} />
                   {errors.mobileNumber && <p className="text-sm text-destructive">{errors.mobileNumber.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Gender</Label>
+                  <Label className="text-gray-300">Gender</Label>
                   <RadioGroup
                     onValueChange={(value) => setValue("gender", value as "male" | "female" | "other")}
                     defaultValue={watch("gender")}
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="male" id="male" />
-                      <Label htmlFor="male">Male</Label>
+                      <Label htmlFor="male" className="text-gray-300">Male</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="female" id="female" />
-                      <Label htmlFor="female">Female</Label>
+                      <Label htmlFor="female" className="text-gray-300">Female</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="other" id="other" />
-                      <Label htmlFor="other">Other</Label>
+                      <Label htmlFor="other" className="text-gray-300">Other</Label>
                     </div>
                   </RadioGroup>
                   {errors.gender && <p className="text-sm text-destructive">{errors.gender.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="ageRange">Age Range</Label>
+                  <Label htmlFor="ageRange" className="text-gray-300">Age Range</Label>
                   <Select onValueChange={(value) => setValue("ageRange", value)} defaultValue={watch("ageRange")}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select age range" />
@@ -178,7 +178,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="county">County</Label>
+                  <Label htmlFor="county" className="text-gray-300">County</Label>
                   <Select onValueChange={(value) => setValue("county", value)} defaultValue={watch("county")}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select county" />
@@ -195,7 +195,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Interests (select at least 3)</Label>
+                  <Label className="text-gray-300">Interests (select at least 3)</Label>
                   <div className="grid grid-cols-2 gap-2">
                     {INTEREST_CATEGORIES.map((interest) => (
                       <div key={interest} className="flex items-center space-x-2">
@@ -204,7 +204,7 @@ export default function ProfilePage() {
                           checked={selectedInterests.includes(interest)}
                           onCheckedChange={(checked) => handleInterestChange(interest, checked as boolean)}
                         />
-                        <Label htmlFor={interest}>{interest}</Label>
+                        <Label htmlFor={interest} className="text-gray-300">{interest}</Label>
                       </div>
                     ))}
                   </div>
@@ -221,22 +221,22 @@ export default function ProfilePage() {
         </TabsContent>
 
         <TabsContent value="security">
-          <Card>
+          <Card className="card-dark">
             <CardHeader>
-              <CardTitle>Security</CardTitle>
+              <CardTitle className="text-gray-300">Security</CardTitle>
               <CardDescription>Manage your password and account security.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="current-password">Current Password</Label>
+                <Label htmlFor="current-password" className="text-gray-300">Current Password</Label>
                 <Input id="current-password" type="password" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="new-password">New Password</Label>
+                <Label htmlFor="new-password" className="text-gray-300">New Password</Label>
                 <Input id="new-password" type="password" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm New Password</Label>
+                <Label htmlFor="confirm-password" className="text-gray-300">Confirm New Password</Label>
                 <Input id="confirm-password" type="password" />
               </div>
             </CardContent>

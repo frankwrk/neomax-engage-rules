@@ -71,9 +71,9 @@ export default function CompetitionsPage() {
 
   if (isLoading) {
     return (
-      <div className="container py-12">
+      <div className="container py-12 bg-secondary">
         <div className="flex items-center justify-center h-64">
-          <p className="text-muted-foreground">Loading competitions...</p>
+          <p className="text-gray-300">Loading competitions...</p>
         </div>
       </div>
     )
@@ -81,12 +81,12 @@ export default function CompetitionsPage() {
 
   if (error) {
     return (
-      <div className="container py-12">
-        <Card>
+      <div className="container py-12 bg-secondary">
+        <Card className="card-dark">
           <CardContent className="py-8 text-center">
             <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
             <h3 className="text-lg font-medium mb-2">Error</h3>
-            <p className="text-muted-foreground mb-4">{error}</p>
+            <p className="text-gray-300 mb-4">{error}</p>
             {error.includes("table does not exist") && (
               <div className="text-left mt-4">
                 <p className="font-medium mb-2">To set up your database schema:</p>
@@ -95,7 +95,7 @@ export default function CompetitionsPage() {
                   <li>Navigate to the SQL Editor</li>
                   <li>Run the following SQL to create the competitions table:</li>
                 </ol>
-                <pre className="bg-muted p-4 rounded-md mt-2 text-sm overflow-x-auto">
+                <pre className="bg-secondary/50 border border-gray-700 p-4 rounded-md mt-2 text-sm overflow-x-auto text-gray-300">
                   {`CREATE TABLE public.competitions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
@@ -116,10 +116,10 @@ export default function CompetitionsPage() {
   }
 
   return (
-    <div className="container py-12">
+    <div className="container py-12 bg-secondary">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Competitions</h1>
-        <p className="text-muted-foreground mt-1">Browse all available competitions and enter for a chance to win.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-white">Competitions</h1>
+        <p className="text-gray-300 mt-1">Browse all available competitions and enter for a chance to win.</p>
       </div>
 
       <div className="flex items-center space-x-2 mb-8">
@@ -142,7 +142,7 @@ export default function CompetitionsPage() {
 
             return (
               <Card key={competition.id} className="prize-card">
-                <div className="aspect-video bg-muted relative">
+                <div className="aspect-video bg-secondary/50 relative">
                   <div className="absolute inset-0 flex items-center justify-center">
                     <img
                       src="/placeholder.svg?height=200&width=400"
@@ -160,8 +160,8 @@ export default function CompetitionsPage() {
                     </span>
                   </div>
                   <h3 className="text-xl font-semibold mb-2">{competition.title}</h3>
-                  <p className="text-muted-foreground mb-4">{truncateText(competition.description, 100)}</p>
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <p className="text-gray-300 mb-4">{truncateText(competition.description, 100)}</p>
+                  <p className="text-sm text-gray-300 mb-4">
                     {isActive ? `Ends: ${formatDate(competition.endsAt)}` : `Ended: ${formatDate(competition.endsAt)}`}
                   </p>
                 </CardContent>
@@ -182,8 +182,8 @@ export default function CompetitionsPage() {
         </div>
       ) : (
         <div className="text-center py-12">
-          <h3 className="text-lg font-medium">No competitions found</h3>
-          <p className="text-muted-foreground mt-1">
+          <h3 className="text-lg font-medium text-white">No competitions found</h3>
+          <p className="text-gray-300 mt-1">
             Try adjusting your search or check back later for new competitions.
           </p>
         </div>
