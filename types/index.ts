@@ -9,6 +9,7 @@ export interface User {
   county: string
   interests: string[]
   createdAt: string
+  role?: "user" | "admin" // Optional for backward compatibility
 }
 
 // Competition Types

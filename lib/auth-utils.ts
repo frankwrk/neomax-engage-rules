@@ -1,15 +1,16 @@
 /**
  * Utility functions for authentication and authorization
  */
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { type Session } from "@supabase/supabase-js";
 
 /**
- * Get the current user's session from Supabase auth
- * @returns The user session or null if not authenticated
+ * Create a Supabase client using server-side cookies
+ * This function should only be called in server components or server actions
  */
-export async function getSession() {
+export async function createServerSupabaseClient() {
+  // Dynamic import ensures next/headers is only imported on the server
+  const { cookies } = await import("next/headers");
   const cookieStore = cookies();
   
   const supabase = createServerClient(
@@ -20,16 +21,32 @@ export async function getSession() {
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
+        set(name: string, value: string, options: CookieOptions) {
+          cookieStore.set({ name, value, ...options });
+        },
+        remove(name: string, options: CookieOptions) {
+          cookieStore.set({ name, value: "", ...options });
+        },
       },
     }
   );
 
+  return supabase;
+}
+
+/**
+ * Get the current user's session
+ * Server-side only function
+ */
+export async function getSession() {
+  const supabase = await createServerSupabaseClient();
   const { data } = await supabase.auth.getSession();
   return data.session;
 }
 
 /**
  * Check if the current user has admin role
+ * Server-side only function
  * @returns Boolean indicating if the current user is an admin
  */
 export async function isAdmin() {
@@ -39,19 +56,7 @@ export async function isAdmin() {
     return false;
   }
   
-  const cookieStore = cookies();
-  
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+  const supabase = await createServerSupabaseClient();
 
   const { data: userData, error } = await supabase
     .from("users")
@@ -68,6 +73,7 @@ export async function isAdmin() {
 
 /**
  * Get the current user's profile from the database
+ * Server-side only function
  * @param session User session
  * @returns User profile data or null if not found
  */
@@ -76,19 +82,7 @@ export async function getUserProfile(session: Session | null) {
     return null;
   }
   
-  const cookieStore = cookies();
-  
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+  const supabase = await createServerSupabaseClient();
 
   const { data, error } = await supabase
     .from("users")

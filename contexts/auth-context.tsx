@@ -4,9 +4,10 @@ import type React from "react"
 
 import { createContext, useContext, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { supabase, isSupabaseConfigured } from "@/lib/supabase"
+import { supabase, isSupabaseConfigured, createBrowserSupabaseClient } from "@/lib/supabase"
 import type { User, UserRegistrationFormValues } from "@/types"
 import { ROUTES } from "@/lib/constants"
+import { Session } from "@supabase/supabase-js"
 
 interface AuthContextType {
   user: User | null
@@ -30,66 +31,72 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
+    // Create a local supabase client instance for this component
+    const client = createBrowserSupabaseClient()
+
     const fetchUser = async () => {
-      const {
-        data: { session },
-      } = await supabase?.auth.getSession() || { data: { session: null } }
+      try {
+        const { data: { session } } = await client.auth.getSession()
 
-      if (session) {
-        const { data: userData } = await supabase?.from("users").select("*").eq("id", session.user.id).single() || { data: null }
-
-        if (userData) {
-          setUser({
-            id: userData.id as string,
-            email: userData.email as string,
-            fullName: userData.full_name as string,
-            mobileNumber: userData.mobile_number as string,
-            gender: userData.gender as "male" | "female" | "other",
-            ageRange: userData.age_range as string,
-            county: userData.county as string,
-            interests: userData.interests as string[],
-            createdAt: userData.created_at as string
-          })
+        if (session) {
+          await updateUserState(session)
         }
+      } catch (error) {
+        console.error("Error fetching user session:", error)
+      } finally {
+        setIsLoading(false)
       }
-
-      setIsLoading(false)
     }
 
     fetchUser()
 
-    // Get the auth subscription for handling auth state changes
-    // Define a fallback response for handling the case when supabase client isn't available
-    const authChangeResponse = supabase?.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN" && session) {
-        const { data: userData } = await supabase?.from("users").select("*").eq("id", session.user.id).single() || { data: null }
+    // Helper function to convert database user to app User type
+    const updateUserState = async (session: Session) => {
+      try {
+        const { data: userData, error } = await client
+          .from("users")
+          .select("*")
+          .eq("id", session.user.id)
+          .single()
+
+        if (error) {
+          console.error("Error fetching user data:", error)
+          return
+        }
 
         if (userData) {
           setUser({
-            id: userData.id as string,
-            email: userData.email as string,
-            fullName: userData.full_name as string,
-            mobileNumber: userData.mobile_number as string,
-            gender: userData.gender as "male" | "female" | "other",
-            ageRange: userData.age_range as string,
-            county: userData.county as string,
-            interests: userData.interests as string[],
-            createdAt: userData.created_at as string
+            id: userData.id,
+            email: userData.email,
+            fullName: userData.full_name,
+            mobileNumber: userData.mobile_number,
+            gender: userData.gender,
+            ageRange: userData.age_range,
+            county: userData.county,
+            interests: userData.interests,
+            createdAt: userData.created_at,
+            role: userData.role
           })
         }
-      } else if (event === "SIGNED_OUT") {
-        setUser(null)
+      } catch (error) {
+        console.error("Error processing user data:", error)
       }
-    })
+    }
+
+    // Set up auth subscription for handling auth state changes
+    const { data: { subscription } } = client.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === "SIGNED_IN" && session) {
+          await updateUserState(session)
+        } else if (event === "SIGNED_OUT") {
+          setUser(null)
+        }
+      }
+    )
 
     return () => {
       // Clean up subscription when component unmounts
-      if (authChangeResponse && 'data' in authChangeResponse) {
-        const { data } = authChangeResponse;
-        if (data && 'subscription' in data) {
-          data.subscription.unsubscribe();
-        }
-      }
+      subscription.unsubscribe()
     }
   }, [])
 
@@ -99,33 +106,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const authResponse = await supabase?.auth.signInWithPassword({
+      // Create a fresh client instance for this operation
+      const client = createBrowserSupabaseClient()
+      
+      const { data, error } = await client.auth.signInWithPassword({
         email,
         password,
-      }) || { data: null, error: new Error("Authentication failed") }
+      })
 
-      if (authResponse.error) {
-        return { success: false, error: authResponse.error.message }
+      if (error) {
+        return { success: false, error: error.message }
       }
 
-      if (!authResponse.data || !authResponse.data.user) {
+      if (!data || !data.user) {
         return { success: false, error: "Authentication failed" }
       }
 
-      const { data: userData } = await supabase?.from("users").select("*").eq("id", authResponse.data.user.id).single() || { data: null }
+      const { data: userData, error: userError } = await client
+        .from("users")
+        .select("*")
+        .eq("id", data.user.id)
+        .single()
+
+      if (userError) {
+        console.error("Error fetching user data after login:", userError)
+        return { success: true } // Still return success since auth worked
+      }
 
       if (userData) {
         setUser({
-          id: userData.id as string,
-          email: userData.email as string,
-          fullName: userData.full_name as string,
-          mobileNumber: userData.mobile_number as string,
-          gender: userData.gender as "male" | "female" | "other",
-          ageRange: userData.age_range as string,
-          county: userData.county as string,
-          interests: userData.interests as string[],
-          createdAt: userData.created_at as string
+          id: userData.id,
+          email: userData.email,
+          fullName: userData.full_name,
+          mobileNumber: userData.mobile_number,
+          gender: userData.gender,
+          ageRange: userData.age_range,
+          county: userData.county,
+          interests: userData.interests,
+          createdAt: userData.created_at,
+          role: userData.role
         })
+        
         // Redirect based on user role
         if (userData.role === 'admin') {
           router.push(ROUTES.ADMIN.DASHBOARD)
@@ -149,31 +170,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const authResponse = await supabase?.auth.signUp({
+      // Create a fresh client instance for this operation
+      const client = createBrowserSupabaseClient()
+      
+      const { data, error } = await client.auth.signUp({
         email: userData.email,
         password: userData.password,
-      }) || { data: null, error: new Error("Signup failed") }
+      })
 
-      if (authResponse.error) {
-        return { success: false, error: authResponse.error.message }
+      if (error) {
+        return { success: false, error: error.message }
       }
 
-      if (authResponse.data?.user) {
-        const insertResponse = await supabase?.from("users").insert([
-          {
-            id: authResponse.data.user.id,
-            email: userData.email,
-            full_name: userData.fullName,
-            mobile_number: userData.mobileNumber,
-            gender: userData.gender,
-            age_range: userData.ageRange,
-            county: userData.county,
-            interests: userData.interests,
-          },
-        ])
+      if (data?.user) {
+        const { error: insertError } = await client
+          .from("users")
+          .insert([
+            {
+              id: data.user.id,
+              email: userData.email,
+              full_name: userData.fullName,
+              mobile_number: userData.mobileNumber,
+              gender: userData.gender,
+              age_range: userData.ageRange,
+              county: userData.county,
+              interests: userData.interests,
+              role: "user", // Default role for new users
+            },
+          ])
 
-        if (insertResponse?.error) {
-          return { success: false, error: insertResponse.error.message }
+        if (insertError) {
+          console.error("Error creating user profile:", insertError)
+          return { success: false, error: insertError.message }
         }
       }
 
@@ -188,10 +216,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     if (isSupabaseConfigured()) {
-      await supabase?.auth.signOut()
+      try {
+        const client = createBrowserSupabaseClient()
+        await client.auth.signOut()
+        setUser(null)
+        router.push(ROUTES.HOME)
+      } catch (error) {
+        console.error("Error signing out:", error)
+      }
     }
-    setUser(null)
-    router.push(ROUTES.HOME)
   }
 
   return <AuthContext.Provider value={{ user, isLoading, signIn, signUp, signOut }}>{children}</AuthContext.Provider>
