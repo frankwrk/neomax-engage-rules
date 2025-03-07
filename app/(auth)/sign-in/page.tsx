@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -18,7 +18,8 @@ import { Label } from "@/components/ui/label"
 
 type FormData = z.infer<typeof signInSchema>
 
-export default function SignInPage() {
+// Component that safely uses useSearchParams inside a Suspense boundary
+function SignInForm() {
   const { signIn } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -68,7 +69,7 @@ export default function SignInPage() {
               <CardTitle className="text-2xl text-white">Sign In</CardTitle>
               <CardDescription className="text-gray-300">Sign in to your account to enter competitions and check your prizes.</CardDescription>
             </CardHeader>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form method="post" onSubmit={handleSubmit(onSubmit)}>
               <CardContent className="space-y-4">
                 {error && <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm">{error}</div>}
 
@@ -108,3 +109,37 @@ export default function SignInPage() {
   )
 }
 
+// Main page component with suspense boundary
+export default function SignInPage() {
+  return (
+    <Suspense fallback={
+      <div className="py-12">
+        <div className="container max-w-md">
+          <Card className="card-dark">
+            <CardHeader>
+              <CardTitle className="text-2xl text-white">Sign In</CardTitle>
+              <CardDescription className="text-gray-300">Sign in to your account to enter competitions and check your prizes.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-gray-300">Email</Label>
+                <Input id="email" type="email" disabled placeholder="Loading..." />
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" className="text-gray-300">Password</Label>
+                </div>
+                <Input id="password" type="password" disabled />
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-col space-y-4">
+              <Button className="w-full" disabled>Loading...</Button>
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
+    }>
+      <SignInForm />
+    </Suspense>
+  )
+}

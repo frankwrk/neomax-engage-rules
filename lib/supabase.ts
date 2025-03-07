@@ -46,6 +46,17 @@ if (typeof window !== "undefined") {
 export { supabase }
 
 /**
+ * Create a new Supabase client instance
+ * @returns A Supabase client instance
+ */
+export function createClient() {
+  if (!supabase) {
+    throw new Error('Supabase client is not initialized. This can happen if environment variables are missing or if called in a server component.')
+  }
+  return supabase
+}
+
+/**
  * Checks if the Supabase client is configured
  * @returns boolean indicating if Supabase is configured
  */

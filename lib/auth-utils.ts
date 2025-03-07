@@ -33,6 +33,22 @@ export function getAndClearRedirectUrl(): string | null {
 }
 
 /**
+ * Get the authenticated user from a server request context
+ * This function should only be used in API routes or server actions
+ * @returns The authenticated user or null if not authenticated
+ */
+export async function getAuthUser() {
+  const supabase = await createServerSupabaseClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    return null;
+  }
+  
+  return session.user;
+}
+
+/**
  * Create a Supabase client using server-side cookies
  * This function should only be called in server components or server actions
  */

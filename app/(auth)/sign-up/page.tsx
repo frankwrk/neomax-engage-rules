@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -21,7 +21,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 
 type FormData = z.infer<typeof signUpSchema>
 
-export default function SignUpPage() {
+function SignUpForm() {
   const { signUp } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -91,7 +91,7 @@ export default function SignUpPage() {
               <CardTitle className="text-2xl text-white">Create an Account</CardTitle>
               <CardDescription className="text-gray-300">Sign up to start entering competitions and winning prizes.</CardDescription>
             </CardHeader>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form method="post" onSubmit={handleSubmit(onSubmit)}>
               <CardContent className="space-y-6">
                 {error && <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm mb-4">{error}</div>}
 
@@ -252,3 +252,28 @@ export default function SignUpPage() {
   )
 }
 
+// Main page component with suspense boundary
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={
+      <div className="py-12">
+        <div className="container max-w-md">
+          <Card className="card-dark">
+            <CardHeader>
+              <CardTitle className="text-2xl text-white">Sign Up</CardTitle>
+              <CardDescription className="text-gray-300">Create an account to enter competitions and win prizes.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="skeleton-form space-y-2"></div>
+            </CardContent>
+            <CardFooter className="flex flex-col space-y-4">
+              <Button className="w-full" disabled>Loading...</Button>
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
+    }>
+      <SignUpForm />
+    </Suspense>
+  )
+}
