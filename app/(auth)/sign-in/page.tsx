@@ -1,14 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import type { z } from "zod"
 import { signInSchema } from "@/lib/validations"
 import { useAuth } from "@/contexts/auth-context"
 import { ROUTES } from "@/lib/constants"
+import { saveRedirectUrl } from "@/lib/auth-utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -21,8 +22,17 @@ type FormData = z.infer<typeof signInSchema>
 export default function SignInPage() {
   const { signIn } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Save the redirect URL from query params if available
+  useEffect(() => {
+    const redirectTo = searchParams.get('redirect_to')
+    if (redirectTo) {
+      saveRedirectUrl(redirectTo)
+    }
+  }, [searchParams])
 
   const {
     register,

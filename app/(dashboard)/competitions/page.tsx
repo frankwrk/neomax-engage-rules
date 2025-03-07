@@ -2,18 +2,19 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { supabase, isSupabaseConfigured } from "@/lib/supabase"
+import { createClient, isSupabaseConfigured } from "@/lib/supabase"
 import type { Competition } from "@/types"
 import { ROUTES } from "@/lib/constants"
 import { formatDate, isCompetitionActive, truncateText } from "@/lib/utils"
+import { getCompetitionEntryCount } from "@/lib/entry-utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Search, AlertCircle } from "lucide-react"
+import { Search, AlertCircle, Users, Clock } from "lucide-react"
 
 export default function CompetitionsPage() {
-  const [competitions, setCompetitions] = useState<Competition[]>([])
-  const [filteredCompetitions, setFilteredCompetitions] = useState<Competition[]>([])
+  const [competitions, setCompetitions] = useState<(Competition & { entryCount: number })[]>([])
+  const [filteredCompetitions, setFilteredCompetitions] = useState<(Competition & { entryCount: number })[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -30,6 +31,7 @@ export default function CompetitionsPage() {
       }
 
       try {
+        const supabase = createClient()
         const { data, error } = await supabase
           .from("competitions")
           .select("*")
@@ -42,8 +44,14 @@ export default function CompetitionsPage() {
             throw error
           }
         } else if (data) {
-          setCompetitions(data as Competition[])
-          setFilteredCompetitions(data as Competition[])
+          const competitionsWithEntries = await Promise.all(
+            (data as Competition[]).map(async (competition) => {
+              const entryCount = await getCompetitionEntryCount(competition.id);
+              return { ...competition, entryCount };
+            })
+          );
+          setCompetitions(competitionsWithEntries as (Competition & { entryCount: number })[]);
+          setFilteredCompetitions(competitionsWithEntries as (Competition & { entryCount: number })[]);
         }
       } catch (error) {
         console.error("Error fetching competitions:", error)
@@ -152,18 +160,23 @@ export default function CompetitionsPage() {
                   </div>
                 </div>
                 <CardContent className="p-6">
-                  <div className="mb-2">
+                  <div className="flex justify-between mb-2">
                     <span
                       className={`competition-badge ${isActive ? "competition-badge-active" : "competition-badge-ended"}`}
                     >
                       {isActive ? "Active" : "Ended"}
                     </span>
+                    <div className="flex items-center text-xs text-gray-300">
+                      <Users className="h-3 w-3 mr-1" />
+                      <span>{competition.entryCount || 0}</span>
+                    </div>
                   </div>
                   <h3 className="text-xl font-semibold mb-2">{competition.title}</h3>
                   <p className="text-gray-300 mb-4">{truncateText(competition.description, 100)}</p>
-                  <p className="text-sm text-gray-300 mb-4">
-                    {isActive ? `Ends: ${formatDate(competition.endsAt)}` : `Ended: ${formatDate(competition.endsAt)}`}
-                  </p>
+                  <div className="flex items-center text-sm text-gray-300 mb-4">
+                    <Clock className="h-4 w-4 mr-1" />
+                    <p>{isActive ? `Ends: ${formatDate(competition.endsAt)}` : `Ended: ${formatDate(competition.endsAt)}`}</p>
+                  </div>
                 </CardContent>
                 <CardFooter>
                   {isActive ? (

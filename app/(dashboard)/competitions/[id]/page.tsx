@@ -5,32 +5,36 @@ import { useParams, useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import type { z } from "zod"
-import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/contexts/auth-context"
 import type { Competition } from "@/types"
 import { ROUTES } from "@/lib/constants"
 import { competitionEntrySchema } from "@/lib/validations"
-import { formatDate, generateEntryNumber, isCompetitionActive } from "@/lib/utils"
+import { formatDate, isCompetitionActive } from "@/lib/utils"
+import { hasUserEnteredCompetition, hasReachedDailyEntryLimit, getCompetitionEntryCount } from "@/lib/entry-utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { AlertCircle, CheckCircle, XCircle } from "lucide-react"
-
+import { AlertCircle, CheckCircle, XCircle, Users } from "lucide-react"
+import { createClient } from "@/lib/supabase"
 type FormData = z.infer<typeof competitionEntrySchema>
 
 export default function CompetitionDetailPage() {
   const { id } = useParams()
+  const competitionId = Array.isArray(id) ? id[0] : id
   const router = useRouter()
   const { user } = useAuth()
   const [competition, setCompetition] = useState<Competition | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [hasEntered, setHasEntered] = useState(false)
+  const [reachedDailyLimit, setReachedDailyLimit] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [entryCount, setEntryCount] = useState(0)
   const [entryResult, setEntryResult] = useState<{
     success: boolean
     correct: boolean
     message: string
+    entryNumber?: string
   } | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [videoWatched, setVideoWatched] = useState(false)
@@ -44,15 +48,16 @@ export default function CompetitionDetailPage() {
   })
 
   useEffect(() => {
-    const fetchCompetition = async () => {
+    const fetchCompetitionData = async () => {
       setIsLoading(true)
 
       try {
         // Fetch competition details
+        const supabase = createClient()
         const { data: competitionData, error: competitionError } = await supabase
           .from("competitions")
           .select("*")
-          .eq("id", id)
+          .eq("id", competitionId)
           .single()
 
         if (competitionError) {
@@ -63,30 +68,30 @@ export default function CompetitionDetailPage() {
           setCompetition(competitionData as Competition)
         }
 
+        // Get entry count
+        const count = await getCompetitionEntryCount(competitionId)
+        setEntryCount(count)
+
         // Check if user has already entered this competition
         if (user) {
-          const { data: entryData, error: entryError } = await supabase
-            .from("entries")
-            .select("*")
-            .eq("user_id", user.id)
-            .eq("competition_id", id)
-            .single()
+          const entered = await hasUserEnteredCompetition(user.id, competitionId)
+          setHasEntered(entered)
 
-          if (entryData) {
-            setHasEntered(true)
-          }
+          // Check daily entry limit
+          const dailyLimitReached = await hasReachedDailyEntryLimit(user.id)
+          setReachedDailyLimit(dailyLimitReached)
         }
       } catch (error) {
-        console.error("Error fetching competition:", error)
+        console.error("Error fetching competition data:", error)
       } finally {
         setIsLoading(false)
       }
     }
 
-    if (id) {
-      fetchCompetition()
+    if (competitionId) {
+      fetchCompetitionData()
     }
-  }, [id, user])
+  }, [competitionId, user])
 
   const handleVideoEnded = () => {
     setVideoWatched(true)
@@ -98,40 +103,38 @@ export default function CompetitionDetailPage() {
     setSubmitting(true)
 
     try {
-      const isCorrect = data.answer.toLowerCase() === competition.correctAnswer.toLowerCase()
-      const entryNumber = generateEntryNumber()
-
-      const { error } = await supabase.from("entries").insert([
-        {
-          user_id: user.id,
-          competition_id: competition.id,
-          entry_number: entryNumber,
-          answer: data.answer,
-          correct: isCorrect,
+      // Submit entry via API endpoint
+      const response = await fetch('/api/entries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      ])
-
-      if (error) {
-        throw error
-      }
-
-      setEntryResult({
-        success: true,
-        correct: isCorrect,
-        message: isCorrect
-          ? "Congratulations! Your answer is correct. You have been entered into the draw."
-          : "Sorry, your answer is incorrect. You can try again.",
+        body: JSON.stringify({
+          competitionId: competitionId,
+          answer: data.answer,
+          competitionTitle: competition.title,
+        }),
       })
 
-      if (isCorrect) {
+      const result = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'An error occurred while submitting your entry')
+      }
+
+      setEntryResult(result)
+
+      if (result.correct) {
         setHasEntered(true)
+        // Update entry count
+        setEntryCount(prev => prev + 1)
       }
     } catch (error) {
       console.error("Error submitting entry:", error)
       setEntryResult({
         success: false,
         correct: false,
-        message: "There was an error submitting your entry. Please try again.",
+        message: error instanceof Error ? error.message : "There was an error submitting your entry. Please try again.",
       })
     } finally {
       setSubmitting(false)
@@ -172,12 +175,17 @@ export default function CompetitionDetailPage() {
       <div className="max-w-4xl mx-auto">
         <Card className="card-dark">
           <CardHeader>
-            <div className="mb-2">
+            <div className="flex justify-between items-center mb-2">
               <span
                 className={`competition-badge ${isActive ? "competition-badge-active" : "competition-badge-ended"}`}
               >
                 {isActive ? "Active" : "Ended"}
               </span>
+              
+              <div className="flex items-center text-gray-300 text-sm">
+                <Users className="h-4 w-4 mr-1" />
+                <span>{entryCount} {entryCount === 1 ? 'Entry' : 'Entries'}</span>
+              </div>
             </div>
             <CardTitle className="text-2xl text-gray-300">{competition.title}</CardTitle>
             <CardDescription>
@@ -200,6 +208,14 @@ export default function CompetitionDetailPage() {
                     Thank you for participating. Winners will be announced after the competition ends.
                   </p>
                 </div>
+              ) : reachedDailyLimit ? (
+                <div className="bg-warning/10 p-6 rounded-lg text-center">
+                  <AlertCircle className="h-12 w-12 text-warning mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">Daily Entry Limit Reached</h3>
+                  <p className="text-muted-foreground">
+                    You've reached your daily entry limit. Please try again tomorrow.
+                  </p>
+                </div>
               ) : (
                 <>
                   <div className="space-y-4">
@@ -220,9 +236,16 @@ export default function CompetitionDetailPage() {
                   {entryResult && (
                     <div className={`p-4 rounded-lg ${entryResult.correct ? "bg-success/10" : "bg-destructive/10"}`}>
                       {entryResult.correct ? (
-                        <div className="flex items-center">
-                          <CheckCircle className="h-5 w-5 text-success mr-2" />
-                          <p>{entryResult.message}</p>
+                        <div className="flex flex-col items-center text-center">
+                          <CheckCircle className="h-10 w-10 text-success my-2" />
+                          <p className="font-medium">{entryResult.message}</p>
+                          {entryResult.entryNumber && (
+                            <div className="mt-2 p-2 bg-accent/10 rounded-md border border-accent/20">
+                              <span className="font-mono font-bold text-accent">
+                                Entry #{entryResult.entryNumber}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       ) : (
                         <div className="flex items-center">

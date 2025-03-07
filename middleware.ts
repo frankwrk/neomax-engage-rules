@@ -46,7 +46,13 @@ export async function middleware(req: NextRequest) {
 
     // If user is not signed in and tries to access authenticated route, redirect to login
     if (!session && isAuthRoute) {
-      return NextResponse.redirect(new URL("/sign-in", req.url))
+      // Create sign-in URL with redirect parameter
+      const signInUrl = new URL("/sign-in", req.url)
+      
+      // Add the requested URL as a redirect_to query parameter
+      signInUrl.searchParams.set('redirect_to', req.nextUrl.pathname + req.nextUrl.search)
+      
+      return NextResponse.redirect(signInUrl)
     }
 
     // If user is signed in but tries to access admin route without admin rights

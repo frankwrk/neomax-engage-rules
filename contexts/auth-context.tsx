@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { supabase, isSupabaseConfigured, createBrowserSupabaseClient } from "@/lib/supabase"
 import type { User, UserRegistrationFormValues } from "@/types"
 import { ROUTES } from "@/lib/constants"
+import { getAndClearRedirectUrl } from "@/lib/auth-utils"
 import { Session } from "@supabase/supabase-js"
 
 interface AuthContextType {
@@ -147,8 +148,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           role: userData.role
         })
         
-        // Redirect based on user role
-        if (userData.role === 'admin') {
+        // Check for saved redirect URL
+        const savedRedirectUrl = getAndClearRedirectUrl()
+        
+        // Redirect based on saved URL or user role
+        if (savedRedirectUrl) {
+          router.push(savedRedirectUrl)
+        } else if (userData.role === 'admin') {
           router.push(ROUTES.ADMIN.DASHBOARD)
         } else {
           router.push(ROUTES.DASHBOARD)
@@ -202,6 +208,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (insertError) {
           console.error("Error creating user profile:", insertError)
           return { success: false, error: insertError.message }
+        }
+        
+        // Now redirect the user after successful signup
+        const savedRedirectUrl = getAndClearRedirectUrl()
+        if (savedRedirectUrl) {
+          router.push(savedRedirectUrl)
+        } else {
+          router.push(ROUTES.DASHBOARD)
         }
       }
 

@@ -1,4 +1,5 @@
 # General Code Style & Formatting
+
 - Follow the Airbnb Style Guide for code formatting.
 - Use early returns when possible
 - Always add documentation when creating new functions and classes
@@ -6,21 +7,26 @@
 - Prefer named exports for components.
 
 # Project Structure & Architecture
+
 - Follow Next.js patterns and use the App Router.
 - Correctly determine when to use server vs. client components in Next.js.
 
 # Styling & UI
+
 - Use Tailwind CSS for styling.
 - Use Shadcn UI for components.
 
 # Data Fetching & Forms
+
 - Use React Hook Form for form handling.
 - Use Zod for validation.
 
 # State Management & Logic
+
 - Use React Context for state management.
 
 # Backend & Database
+
 Use Supabase for database access.
 
 # **Neomax Engage – Website Design & Development Brief**
@@ -245,8 +251,8 @@ A **bold, engaging color scheme** designed to create excitement and trust while 
 | **Neutral**    | `#F5F5F5` (Light Gray)  | Backgrounds, dividers              |
 | **Text Dark**  | `#1E1E1E` (Dark Gray)   | Primary text color                 |
 | **Text Light** | `#FFFFFF` (White)       | Text on dark backgrounds           |
-| **Warning**    | `#FFC107` (Amber)       | Warning messages, caution |
-| **Card**       | `#202E4D` (LightBlue)| Card components background |
+| **Warning**    | `#FFC107` (Amber)       | Warning messages, caution          |
+| **Card**       | `#202E4D` (LightBlue)   | Card components background         |
 
 ✅ **Accessibility Compliance:** All text/background color pairings meet WCAG AA+ contrast standards.
 

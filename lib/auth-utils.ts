@@ -5,6 +5,34 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { type Session } from "@supabase/supabase-js";
 
 /**
+ * localStorage key for storing the redirect URL after authentication
+ */
+export const REDIRECT_URL_KEY = 'neomax_auth_redirect_url';
+
+/**
+ * Save a URL to redirect to after authentication
+ * @param url The URL to redirect to
+ */
+export function saveRedirectUrl(url: string): void {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(REDIRECT_URL_KEY, url);
+  }
+}
+
+/**
+ * Get the saved redirect URL and clear it from storage
+ * @returns The saved redirect URL or null if none was saved
+ */
+export function getAndClearRedirectUrl(): string | null {
+  if (typeof window !== 'undefined') {
+    const url = localStorage.getItem(REDIRECT_URL_KEY);
+    localStorage.removeItem(REDIRECT_URL_KEY);
+    return url;
+  }
+  return null;
+}
+
+/**
  * Create a Supabase client using server-side cookies
  * This function should only be called in server components or server actions
  */
