@@ -14,8 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { MainNav } from "@/components/main-nav"
-import { Footer } from "@/components/footer"
+
 
 type FormData = z.infer<typeof signInSchema>
 
@@ -62,11 +61,9 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <MainNav />
-      <main className="flex-1 py-12 bg-secondary">
-        <div className="container max-w-md">
-          <Card className="card-dark">
+    <div className="py-12">
+      <div className="container max-w-md">
+        <Card className="card-dark">
             <CardHeader>
               <CardTitle className="text-2xl text-white">Sign In</CardTitle>
               <CardDescription className="text-gray-300">Sign in to your account to enter competitions and check your prizes.</CardDescription>
@@ -106,9 +103,7 @@ export default function SignInPage() {
               </CardFooter>
             </form>
           </Card>
-        </div>
-      </main>
-      <Footer />
+      </div>
     </div>
   )
 }

@@ -37,7 +37,10 @@ export async function middleware(req: NextRequest) {
       isAdminRoute
 
     // Check if the request is for an auth page (login/signup)
-    const isAuthPage = req.nextUrl.pathname.startsWith("/sign-in") || req.nextUrl.pathname.startsWith("/sign-up")
+    // Need to match both direct and route group paths
+    const isAuthPage = 
+      req.nextUrl.pathname === "/sign-in" || 
+      req.nextUrl.pathname === "/sign-up"
 
     // If user is signed in and tries to access auth page, redirect to dashboard
     if (session && isAuthPage) {
@@ -78,6 +81,16 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/profile/:path*", "/competitions/:path*", "/admin/:path*", "/sign-in", "/sign-up"],
+  matcher: [
+    // Protected routes that require authentication
+    "/dashboard/:path*", 
+    "/profile/:path*", 
+    "/competitions/:path*", 
+    "/admin/:path*", 
+    
+    // Auth pages (for redirecting authenticated users away from these pages)
+    "/sign-in", 
+    "/sign-up"
+  ]
 }
 

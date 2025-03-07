@@ -17,8 +17,7 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { MainNav } from "@/components/main-nav"
-import { Footer } from "@/components/footer"
+
 
 type FormData = z.infer<typeof signUpSchema>
 
@@ -85,10 +84,8 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <MainNav />
-      <main className="flex-1 py-12 bg-secondary">
-        <div className="container max-w-3xl">
+    <div className="py-12">
+      <div className="container max-w-3xl">
           <Card className="card-dark">
             <CardHeader>
               <CardTitle className="text-2xl text-white">Create an Account</CardTitle>
@@ -250,9 +247,7 @@ export default function SignUpPage() {
               </CardFooter>
             </form>
           </Card>
-        </div>
-      </main>
-      <Footer />
+      </div>
     </div>
   )
 }
